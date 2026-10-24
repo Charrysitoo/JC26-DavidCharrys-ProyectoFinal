@@ -1,55 +1,35 @@
-import { useMemo, useState } from "react";
-import "./Home.css";
+import React, { useMemo, useState, useEffect } from "react";
 import "./Menu.css";
-import logo from "./assets/MAKARIOS-LOGO.svg";
+import { products, categories, formatPrice } from "./products";
+import { readCart, writeCart } from "./cartStorage";
+import SiteHeader from "./components/SiteHeader";
+import SiteFooter from "./components/SiteFooter";
 
-// Datos de demostración. Más adelante se cargarán desde la API del restaurante.
-const products = [
-  {
-    id: "burger-criollo",
-    name: "Burger criollo",
-    description:
-      "Carne jugosa, queso, vegetales frescos y salsa de la casa.",
-    price: 24000,
-    category: "Hamburguesas",
-    image: "/images/burger-criollo.png",
-    tag: "Favorito",
-  },
-  {
-    id: "arepa-gourmet",
-    name: "Arepa gourmet",
-    description:
-      "Arepa dorada con relleno generoso e ingredientes locales.",
-    price: 18000,
-    category: "Arepas",
-    image: "/images/arepa-gourmet.png",
-    tag: "Tradición",
-  },
-  {
-    id: "patacon-especial",
-    name: "Patacón especial",
-    description:
-      "Patacón crujiente con una combinación fresca y sabrosa.",
-    price: 22000,
-    category: "Patacones",
-    image: "/images/patacon-especial.png",
-    tag: "De la casa",
-  },
-];
-
-const categories = ["Todos", "Hamburguesas", "Arepas", "Patacones"];
-
-const formatPrice = (price) =>
-  new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    maximumFractionDigits: 0,
-  }).format(price);
-
+/* Catálogo compartido en products.js para mantener menú y pedidos sincronizados. */
 export default function Menu() {
+  useEffect(() => {
+      document.title = 'Menú - Makarios Company';
+    }, []);
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("featured");
+  const [cart, setCart] = useState(() => readCart());
+  const [recentlyAddedId, setRecentlyAddedId] = useState(null);
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+  function handleAddToOrder(productId) {
+    const currentCart = readCart();
+    const existingItem = currentCart.find((item) => item.id === productId);
+    const updatedCart = existingItem
+      ? currentCart.map((item) =>
+          item.id === productId ? { ...item, quantity: Math.min(99, item.quantity + 1) } : item
+        )
+      : [...currentCart, { id: productId, quantity: 1 }];
+
+    writeCart(updatedCart);
+    setCart(updatedCart);
+    setRecentlyAddedId(productId);
+  }
 
   const visibleProducts = useMemo(() => {
     const search = searchTerm.trim().toLocaleLowerCase("es-CO");
@@ -73,26 +53,12 @@ export default function Menu() {
 
   return (
     <main className="menu-page">
-      <header className="site-header">
-        <a className="brand" href="/" aria-label="Ir al inicio">
-          <img
-            className="brand-logo"
-            src={logo}
-            alt="Logo del restaurante"
-          />
-        </a>
-
-        <nav className="main-nav" aria-label="Navegación principal">
-          <a href="/">Inicio</a>
-          <a href="/menu" aria-current="page">Menú</a>
-          <a href="/#nosotros">Nuestra esencia</a>
-          <a href="/#contacto">Contacto</a>
-        </nav>
-
-        <a className="header-cta" href="/#contacto">
-          Contáctanos <span aria-hidden="true">↗</span>
-        </a>
-      </header>
+      <SiteHeader
+        activePage="menu"
+        actionLabel={`Mi pedido (${cartCount})`}
+        actionHref="/pedidos"
+        actionAriaLabel={`Ver mi pedido, ${cartCount} productos`}
+      />
 
       <section className="menu-hero">
         <p className="eyebrow"><span className="eyebrow-dot" /> Hecho con sabor colombiano</p>
@@ -177,9 +143,14 @@ export default function Menu() {
                   <p className="menu-product-description">{product.description}</p>
                   <div className="menu-product-footer">
                     <span className="product-made-here"><span aria-hidden="true">✳</span> Sabor de aquí</span>
-                    <a href="/#contacto" aria-label={`Consultar por ${product.name}`}>
-                      Consultar <span aria-hidden="true">↗</span>
-                    </a>
+                    <button
+                      className="menu-add-button"
+                      type="button"
+                      onClick={() => handleAddToOrder(product.id)}
+                      aria-label={`Agregar ${product.name} al pedido`}
+                    >
+                      {recentlyAddedId === product.id ? "Añadido ✓" : "Agregar al pedido +"}
+                    </button>
                   </div>
                 </div>
               </article>
@@ -211,25 +182,22 @@ export default function Menu() {
 
       <section className="menu-contact-banner">
         <div>
-          <p className="eyebrow">¿Tienes una pregunta?</p>
-          <h2>Hablemos de <em>comida.</em></h2>
+          <p className="eyebrow">¿Listo para disfrutar?</p>
+          <h2>Tu próximo antojo <em>empieza aquí.</em></h2>
         </div>
-        <a className="button button-light" href="/#contacto">
-          Contactar al restaurante <span aria-hidden="true">↗</span>
-        </a>
+        <div className="menu-banner-actions">
+          <a className="button button-light" href="/pedidos">
+            Realizar pedido <span aria-hidden="true">↗</span>
+          </a>
+          <a className="menu-banner-contact" href="/#contacto">Contactar al restaurante</a>
+        </div>
       </section>
 
-      <footer className="site-footer">
-        <a className="footer-brand" href="/">
-          <img src="/images/logo.svg" alt="" />
-          <span>Buen sabor. Buen origen.</span>
-        </a>
-        <p>© {new Date().getFullYear()} Tu Restaurante. Hecho con sabor colombiano.</p>
-        <a href="#top" className="back-to-top" onClick={(event) => {
-          event.preventDefault();
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }}>Volver arriba ↑</a>
-      </footer>
+      <SiteFooter
+        backLabel="Volver arriba"
+        backHref="#top"
+        backToTop
+      />
     </main>
   );
 }

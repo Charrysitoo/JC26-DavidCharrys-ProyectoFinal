@@ -1,54 +1,19 @@
+import React from "react";
 import "./Home.css";
-import logo from "./assets/MAKARIOS-LOGO.svg";
 import mainImage from "./assets/Main-Image.jpg";
-
-const dishes = [
-  {
-    name: "Burger criollo",
-    description: "Carne jugosa, queso, vegetales frescos y salsa de la casa.",
-    price: "$ 24.000",
-    image: "/images/burger-criollo.png",
-    tag: "Favorito",
-  },
-  {
-    name: "Arepa gourmet",
-    description: "Arepa dorada con relleno generoso e ingredientes locales.",
-    price: "$ 18.000",
-    image: "/images/arepa-gourmet.png",
-    tag: "Tradición",
-  },
-  {
-    name: "Patacón especial",
-    description: "Patacón crujiente con una combinación fresca y sabrosa.",
-    price: "$ 22.000",
-    image: "/images/patacon-especial.png",
-    tag: "De la casa",
-  },
-];
+import SiteHeader from "./components/SiteHeader";
+import SiteFooter from "./components/SiteFooter";
+import { products, formatPrice } from "./products";
 
 export default function Home() {
   return (
     <main className="home-page">
-      <header className="site-header">
-        <a className="brand" href="#inicio" aria-label="Ir al inicio">
-          <img
-            className="brand-logo"
-            src={logo}
-            alt="Logo del restaurante"
-          />
-        </a>
-
-        <nav className="main-nav" aria-label="Navegación principal">
-          <a href="#inicio">Inicio</a>
-          <a href="#menu">Selecciones</a>
-          <a href="#nosotros">Nuestra esencia</a>
-          <a href="#contacto">Contacto</a>
-        </nav>
-
-        <a className="header-cta" href="/menu">
-          Ver menú <span aria-hidden="true">↗</span>
-        </a>
-      </header>
+      <SiteHeader
+        activePage="home"
+        actionLabel="Hacer pedido"
+        actionHref="/pedidos"
+        actionAriaLabel="Ir a realizar un pedido"
+      />
 
       <section className="hero" id="inicio">
         <div className="hero-copy">
@@ -72,24 +37,14 @@ export default function Home() {
           </p>
 
           <div className="hero-actions">
-            <a className="button button-primary" href="#menu">
+            <a className="button button-primary" href="/menu">
               Explorar el menú <span aria-hidden="true">→</span>
             </a>
             <a className="text-link" href="#nosotros">
               Conoce nuestra historia
             </a>
           </div>
-
-          <div className="hero-note">
-            <span className="note-mark" aria-hidden="true">✳</span>
-            <p>
-              <strong>Tradición que inspira.</strong>
-              <br />
-              Creatividad que se disfruta.
-            </p>
-          </div>
         </div>
-
         <div className="hero-visual" aria-label="Presentación gastronómica">
           <div className="hero-image-frame">
             <img
@@ -147,8 +102,8 @@ export default function Home() {
         </div>
 
         <div className="dish-grid">
-          {dishes.map((dish) => (
-            <article className="dish-card" key={dish.name}>
+          {products.slice(0, 3).map((dish) => (
+            <article className="dish-card" key={dish.id}>
               <div className="dish-image-wrap">
                 <img src={dish.image} alt={dish.name} loading="lazy" />
                 <span className="dish-tag">{dish.tag}</span>
@@ -156,11 +111,11 @@ export default function Home() {
               <div className="dish-details">
                 <div className="dish-title-row">
                   <h3>{dish.name}</h3>
-                  <span className="dish-price">{dish.price}</span>
+                  <span className="dish-price">{formatPrice(dish.price)}</span>
                 </div>
                 <p>{dish.description}</p>
-                <a href="#contacto" className="dish-link">
-                  Quiero probarlo <span aria-hidden="true">↗</span>
+                <a href="/menu" className="dish-link">
+                  Ver en el menú <span aria-hidden="true">↗</span>
                 </a>
               </div>
             </article>
@@ -215,14 +170,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="site-footer">
-        <a className="footer-brand" href="#inicio">
-          <img src="/images/logo.svg" alt="" />
-          <span>Buen sabor. Buen origen.</span>
-        </a>
-        <p>© {new Date().getFullYear()} Tu Restaurante. Hecho con sabor colombiano.</p>
-        <a href="#inicio" className="back-to-top">Volver arriba ↑</a>
-      </footer>
+      <SiteFooter brandHref="#inicio" backLabel="Volver arriba" backHref="#inicio" backToTop />
     </main>
   );
 }

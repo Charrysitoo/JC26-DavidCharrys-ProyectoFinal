@@ -560,3 +560,20 @@
     transition: none;
   }
 }
+
+
+.menu-add-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--green);
+  cursor: pointer;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 700;
+}
+.menu-add-button:hover { text-decoration: underline; text-underline-offset: 4px; }
+.menu-add-button:focus-visible { outline: 2px solid var(--green); outline-offset: 4px; }
+.menu-banner-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.menu-banner-contact { color: var(--white); font-size: .75rem; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 700px) { .menu-banner-actions { align-items: flex-start; flex-direction: column; } }
