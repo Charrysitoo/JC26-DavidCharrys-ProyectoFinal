@@ -7,7 +7,7 @@
 
 ## Introducción
 
-Makarios es un emprendimiento del sector gastronómico enfocado en la comercialización de alimentos de tipo gourmet y comida rápida. Nuestro nombre significa "Bienaventurado", 
+Makarios es un emprendimiento del sector gastronómico enfocado en la comercialización de alimentos de tipo gourmet y comida rápida. Su situación, radica en que mantener un establecimiento físico es costoso, y manejar contacto únicamente a través de apps de mensajería como WhatsApp es tedioso. Como solución, requieren una plataforma que les permita funcionar remotamente y en la que sea fácil hacer contacto con los usuarios y atender sus solicitudes.
 
 ## Objetivo del Proyecto
 Desarrollar una aplicación pública donde cualquier persona pueda conocer el negocio y sus ofertas, y si es de su interés, contactar al restaurante y solicitar pedidos directamente desde la propia página web. A su vez, desarrollar una aplicación privada donde los administradores puedan revisar los formularios enviados por las persona, ya sea para responder a las solicitudes de contacto o empezar a procesar un pedido.
