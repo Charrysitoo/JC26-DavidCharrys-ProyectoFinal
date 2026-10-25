@@ -16,10 +16,6 @@ export default function Home() {
 
       <section className="hero" id="inicio">
         <div className="hero-copy">
-          <p className="eyebrow">
-            <span className="eyebrow-dot" />
-            Sabor colombiano, hecho con intención
-          </p>
 
           <h1>
             Lo nuestro,
@@ -39,9 +35,6 @@ export default function Home() {
             <a className="button button-primary" href="/menu">
               Explorar el menú <span aria-hidden="true">→</span>
             </a>
-            <a className="text-link" href="#nosotros">
-              Conoce nuestra historia
-            </a>
           </div>
         </div>
         <div className="hero-visual" aria-label="Presentación gastronómica">
@@ -53,13 +46,9 @@ export default function Home() {
             />
           </div>
           <div className="hero-stamp" aria-hidden="true">
-            <span>HECHO</span>
-            <strong>con sabor</strong>
-            <span>COLOMBIANO</span>
-          </div>
-          <div className="hero-caption">
-            <span className="caption-line" />
-            <span>Una experiencia para saborear</span>
+            <span>Para la</span>
+            <strong>Bendición</strong>
+            <span>de Dios</span>
           </div>
         </div>
       </section>
@@ -75,8 +64,8 @@ export default function Home() {
         <div className="value-item">
           <span className="value-number">02</span>
           <div>
-            <h2>Raíces colombianas</h2>
-            <p>Recetas inspiradas en nuestra tierra.</p>
+            <h2>Gastronomía de nuestras raíces</h2>
+            <p>Recetas que te hacen amar tu tierra.</p>
           </div>
         </div>
         <div className="value-item">
@@ -86,6 +75,16 @@ export default function Home() {
             <p>Calidad y sabor en cada bocado.</p>
           </div>
         </div>
+      </section>
+
+      <section className="home-hours" aria-labelledby="home-hours-title">
+        <div className="home-hours-icon" aria-hidden="true">◷</div>
+        <div>
+          <p className="eyebrow">Estamos para atenderte</p>
+          <h2 id="home-hours-title">Nuestro <em>horario.</em></h2>
+          <p>Lunes a sábado, de 12:00 p. m. a 7:00 p. m. Los domingos no tenemos servicio ni recibimos pedidos.</p>
+        </div>
+        <a className="button button-outline" href="/pedidos">Hacer pedido <span aria-hidden="true">→</span></a>
       </section>
 
       <section className="menu-section section-wrap" id="menu">

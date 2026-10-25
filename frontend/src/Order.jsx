@@ -3,6 +3,7 @@ import "./Order.css";
 import { products, formatPrice } from "./products";
 import { readCart, writeCart } from "./cartStorage";
 import { submitOrder } from "./apiClient";
+import { isSundayInBogota } from "./businessHours";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 
@@ -11,11 +12,16 @@ export default function Order() {
         document.title = 'Realizar Pedido - Makarios Company';
       }, []);
   const [cart, setCart] = useState(() => readCart());
-  const [orderType, setOrderType] = useState("delivery");
+  const [isClosedSunday, setIsClosedSunday] = useState(isSundayInBogota);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [confirmation, setConfirmation] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setIsClosedSunday(isSundayInBogota()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const selectedItems = useMemo(
     () => cart
@@ -39,6 +45,11 @@ export default function Order() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (isSundayInBogota()) {
+      setIsClosedSunday(true);
+      setErrorMessage("Los domingos no recibimos pedidos. Puedes volver a intentarlo de lunes a sábado, de 12:00 p. m. a 7:00 p. m.");
+      return;
+    }
     if (selectedItems.length === 0 || isSubmitting) return;
 
     const form = event.currentTarget;
@@ -49,7 +60,7 @@ export default function Order() {
     setConfirmation("");
     try {
       const payload = {
-        orderType,
+        orderType: "delivery",
         paymentMethod,
         customerName: formData.get("customerName"),
         customerPhone: formData.get("customerPhone"),
@@ -68,7 +79,7 @@ export default function Order() {
       };
       const { order, trackingToken } = await submitOrder(payload);
       setConfirmation(
-        `¡Listo! Registramos tu pedido ${order.code}. Guarda también este código privado de seguimiento: ${trackingToken}. Lo necesitarás para consultar el estado. Te contactaremos al ${order.customer.phone} para confirmar disponibilidad, tiempo de entrega y el valor del domicilio.`
+        `Tu pedido ${order.code} ha sido registrado. Guarda también este código privado de seguimiento: ${trackingToken}. Lo necesitarás para consultar el estado. Te contactaremos al ${order.customer.phone} para confirmar disponibilidad, tiempo de entrega y el valor del domicilio.`
       );
       form.reset();
       setCart([]);
@@ -117,14 +128,19 @@ export default function Order() {
         <p className="eyebrow"><span className="eyebrow-dot" /> Un buen antojo está cerca</p>
         <h1>Hagamos tu pedido <em>especial.</em></h1>
         <p>
-          Elige tus platos, revisa las cantidades y déjanos los datos necesarios
-          para preparar tu pedido. Esta página es independiente del formulario de contacto.
+          Elige tus platos, revisa las cantidades y déjanos los datos de entrega.
+          Recibimos pedidos únicamente a domicilio.
         </p>
         <div className="order-steps" aria-label="Pasos para realizar el pedido">
           <span><b>01</b> Elige tus platos</span>
           <span><b>02</b> Completa tus datos</span>
           <span><b>03</b> Revisa el resumen</span>
         </div>
+        <p className={`order-hours-note${isClosedSunday ? " is-closed" : ""}`}>
+          {isClosedSunday
+            ? "Hoy domingo no recibimos pedidos. Volvemos el lunes a las 12:00 p. m."
+            : "Horario de atención: lunes a sábado, de 12:00 p. m. a 7:00 p. m. (hora de Colombia)."}
+        </p>
       </section>
 
       <div className="order-layout">
@@ -159,7 +175,7 @@ export default function Order() {
                 );
               })}
             </div>
-            <p className="order-catalog-note">Los precios son valores de referencia provisionales y deben confirmarse antes de publicar.</p>
+            <p className="order-catalog-note">El valor del domicilio y la disponibilidad se confirman al recibir tu pedido.</p>
           </section>
 
           <section className="order-section cart-section" aria-labelledby="cart-title">
@@ -212,20 +228,6 @@ export default function Order() {
           </div>
 
           <form className="order-form" onSubmit={handleSubmit}>
-            <fieldset className="order-fieldset order-type-fieldset">
-              <legend>¿Cómo quieres recibirlo?</legend>
-              <div className="order-type-options">
-                <label className={`order-type-option ${orderType === "delivery" ? "is-selected" : ""}`}>
-                  <input type="radio" name="orderType" value="delivery" checked={orderType === "delivery"} onChange={() => { setOrderType("delivery"); setConfirmation(""); }} />
-                  <span aria-hidden="true">⌂</span><span><strong>Domicilio</strong><small>Recíbelo en tu dirección</small></span>
-                </label>
-                <label className={`order-type-option ${orderType === "pickup" ? "is-selected" : ""}`}>
-                  <input type="radio" name="orderType" value="pickup" checked={orderType === "pickup"} onChange={() => { setOrderType("pickup"); setConfirmation(""); }} />
-                  <span aria-hidden="true">↗</span><span><strong>Recoger</strong><small>Pasa por el restaurante</small></span>
-                </label>
-              </div>
-            </fieldset>
-
             <div className="order-form-fields">
               <label className="order-field">
                 <span>Nombre completo *</span>
@@ -240,22 +242,18 @@ export default function Order() {
                 <input name="customerEmail" type="email" placeholder="nombre@correo.com" autoComplete="email" />
               </label>
 
-              {orderType === "delivery" && (
-                <>
-                  <label className="order-field">
-                    <span>Dirección de entrega *</span>
-                    <input name="deliveryAddress" type="text" placeholder="Calle, carrera, número..." autoComplete="street-address" required />
-                  </label>
-                  <label className="order-field">
-                    <span>Barrio o zona *</span>
-                    <input name="neighborhood" type="text" placeholder="Barrio donde te encuentras" required />
-                  </label>
-                  <label className="order-field">
-                    <span>Referencia para llegar (opcional)</span>
-                    <input name="deliveryReference" type="text" placeholder="Edificio, portería, casa esquinera..." />
-                  </label>
-                </>
-              )}
+              <label className="order-field">
+                <span>Dirección de entrega *</span>
+                <input name="deliveryAddress" type="text" placeholder="Calle, carrera, número..." autoComplete="street-address" required />
+              </label>
+              <label className="order-field">
+                <span>Barrio o zona *</span>
+                <input name="neighborhood" type="text" placeholder="Barrio donde te encuentras" required />
+              </label>
+              <label className="order-field">
+                <span>Referencia para llegar (opcional)</span>
+                <input name="deliveryReference" type="text" placeholder="Edificio, portería, casa esquinera..." />
+              </label>
 
               <label className="order-field">
                 <span>Forma de pago preferida</span>
@@ -273,7 +271,7 @@ export default function Order() {
 
             <div className="order-summary">
               <div className="order-summary-line"><span>Productos ({itemCount})</span><strong>{formatPrice(subtotal)}</strong></div>
-              <div className="order-summary-line"><span>{orderType === "delivery" ? "Domicilio" : "Recogida"}</span><strong>{orderType === "delivery" ? "Por confirmar" : "Sin costo"}</strong></div>
+              <div className="order-summary-line"><span>Domicilio</span><strong>Por confirmar</strong></div>
               <div className="order-summary-total"><span>Subtotal de productos</span><strong>{formatPrice(subtotal)}</strong></div>
               <p>El valor del domicilio, la disponibilidad y el tiempo de entrega se confirmarán antes de aceptar el pedido.</p>
             </div>
@@ -289,10 +287,12 @@ export default function Order() {
               </div>
             )}
 
-            <button className="order-submit-button" type="submit" disabled={selectedItems.length === 0 || isSubmitting}>
+            <button className="order-submit-button" type="submit" disabled={selectedItems.length === 0 || isSubmitting || isClosedSunday}>
               {isSubmitting ? "Enviando pedido..." : "Enviar mi pedido"} <span aria-hidden="true">→</span>
             </button>
-            {selectedItems.length === 0 && <p className="order-submit-hint">Agrega al menos un plato para continuar.</p>}
+            {isClosedSunday ? (
+              <p className="order-submit-hint">Los pedidos se habilitan de lunes a sábado, de 12:00 p. m. a 7:00 p. m.</p>
+            ) : selectedItems.length === 0 && <p className="order-submit-hint">Agrega al menos un plato para continuar.</p>}
             <p className="order-privacy-note">Tus datos se envían de forma segura al sistema del restaurante y se utilizan únicamente para preparar y entregar tu pedido.</p>
           </form>
         </aside>

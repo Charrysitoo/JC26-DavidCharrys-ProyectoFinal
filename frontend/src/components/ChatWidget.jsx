@@ -15,6 +15,20 @@ const GREETING = {
   text: "¡Hola! Puedo ayudarte a conocer el menú, elegir un plato o saber cómo hacer tu pedido.",
 };
 
+const QUICK_PROMPTS = [
+  { label: "¿Qué me recomiendas?", prompt: "Quiero una recomendación para elegir un plato." },
+  {
+    label: "¿Qué horarios hay?",
+    prompt: "¿Qué horarios hay?",
+    reply: "Atendemos de lunes a sábado, de 12:00 p. m. a 7:00 p. m. Los domingos no tenemos servicio ni recibimos pedidos.",
+  },
+  {
+    label: "¿Cómo puedo pedir?",
+    prompt: "¿Cómo puedo pedir?",
+    reply: "En la opción «Hacer pedido» puedes añadir los platos que quieras, completar tus datos de entrega, elegir el método de pago y enviar el pedido. Al terminar recibirás un número de pedido y un código privado para consultar su estado. Solo hacemos domicilios.",
+  },
+];
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("chat");
@@ -25,24 +39,43 @@ export default function ChatWidget() {
   const [trackResult, setTrackResult] = useState("");
   const [trackError, setTrackError] = useState("");
 
-  async function handleChatSubmit(event) {
-    event.preventDefault();
-    const text = input.trim();
-    if (!text || busy) return;
-
-    const next = [...messages, { role: "user", text }];
-    setMessages(next);
-    setInput("");
+  async function askAssistant(history) {
     setBusy(true);
     setChatError("");
     try {
-      const result = await sendChatMessage(next.slice(-10));
-      setMessages([...next, { role: "model", text: result.reply }]);
+      const result = await sendChatMessage(history.slice(1).slice(-10));
+      setMessages([...history, { role: "model", text: result.reply }]);
     } catch (error) {
       setChatError(error.message);
     } finally {
       setBusy(false);
     }
+  }
+
+  function sendChatText(text) {
+    const next = [...messages, { role: "user", text }];
+    setMessages(next);
+    setInput("");
+    askAssistant(next);
+  }
+
+  function handleQuickPrompt(quickPrompt) {
+    if (busy) return;
+    const next = [...messages, { role: "user", text: quickPrompt.prompt }];
+    setMessages(next);
+    setChatError("");
+    if (quickPrompt.reply) {
+      setMessages([...next, { role: "model", text: quickPrompt.reply }]);
+      return;
+    }
+    askAssistant(next);
+  }
+
+  function handleChatSubmit(event) {
+    event.preventDefault();
+    const text = input.trim();
+    if (!text || busy) return;
+    sendChatText(text);
   }
 
   async function handleTrackSubmit(event) {
@@ -89,6 +122,15 @@ export default function ChatWidget() {
                 ))}
                 {busy && <p className="assistant-message from-assistant">Escribiendo…</p>}
               </div>
+              {messages.length === 1 && (
+                <div className="assistant-quick-prompts" aria-label="Preguntas rápidas">
+                  {QUICK_PROMPTS.map((quickPrompt) => (
+                    <button key={quickPrompt.label} type="button" onClick={() => handleQuickPrompt(quickPrompt)} disabled={busy}>
+                      {quickPrompt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               {chatError && <p className="assistant-error" role="alert">{chatError}</p>}
               <form className="assistant-composer" onSubmit={handleChatSubmit}>
                 <label className="visually-hidden" htmlFor="assistant-question">Escribe tu consulta</label>

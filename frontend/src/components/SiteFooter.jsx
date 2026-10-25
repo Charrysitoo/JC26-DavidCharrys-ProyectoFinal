@@ -1,4 +1,3 @@
-import React from "react";
 import logo from "../assets/MAKARIOS-LOGO.svg";
 
 /** Pie de página común. Puede volver arriba o llevar a otra página. */
@@ -19,9 +18,9 @@ export default function SiteFooter({
     <footer className="site-footer">
       <a className="footer-brand" href={brandHref} aria-label="Makarios Company: ir al inicio">
         <img src={logo} alt="Makarios Company" />
-        <span>Buen sabor. Buen origen.</span>
+        <span>Isaías 41:10-13</span>
       </a>
-      <p>© {new Date().getFullYear()} Makarios Company. Hecho con sabor colombiano.</p>
+      <p>© {new Date().getFullYear()} Makarios Company. By: David Santiago Charrys Pacheco.</p>
       <a
         href={backHref}
         className="back-to-top"

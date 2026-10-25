@@ -1,5 +1,5 @@
 // Catálogo compartido por Inicio, Menú y Pedidos.
-// Los precios son valores de referencia provisionales: deben confirmarse antes de publicar.
+// Catálogo y precios vigentes para las páginas públicas.
 import tablaDeQuesosImage from "./assets/menu/tabla-de-quesos.jpg";
 import costillaBBQImage from "./assets/menu/costilla-de-cerdo-bbq.jpg";
 import lomoAgridulceImage from "./assets/menu/lomo-de-cerdo-agridulce.jpg";
@@ -11,8 +11,8 @@ export const products = [
   {
     id: "tabla-de-quesos",
     name: "Tabla de quesos",
-    description: "Una selección para compartir de quesos, carnes frías, frutas y acompañamientos.",
-    price: 38000,
+    description: "Una Tabla especial de varias elecciones de quesos, carnes frías, frutas y otros snacks ideales para reuniones.",
+    price: 80000,
     category: "Entradas",
     image: tablaDeQuesosImage,
     tag: "Para compartir",
@@ -22,7 +22,7 @@ export const products = [
     id: "costilla-de-cerdo-bbq",
     name: "Costilla de cerdo en salsa BBQ",
     description: "Costilla de cerdo cubierta con salsa BBQ y servida con acompañamientos.",
-    price: 32000,
+    price: 22000,
     category: "Platos fuertes",
     image: costillaBBQImage,
     tag: "De la casa",
@@ -32,7 +32,7 @@ export const products = [
     id: "lomo-de-cerdo-agridulce",
     name: "Lomo de cerdo en salsa agridulce",
     description: "Lomo de cerdo en salsa agridulce, acompañado con guarniciones.",
-    price: 30000,
+    price: 20000,
     category: "Platos fuertes",
     image: lomoAgridulceImage,
     tag: "Sabor especial",
@@ -42,7 +42,7 @@ export const products = [
     id: "picada-tres-carnes",
     name: "Picada tres carnes",
     description: "Una combinación de carnes y acompañamientos, ideal para compartir.",
-    price: 58000,
+    price: 27000,
     category: "Para compartir",
     image: picadaTresCarnesImage,
     tag: "Favorita para compartir",
@@ -52,7 +52,7 @@ export const products = [
     id: "pinchos-tres-carnes",
     name: "Pinchos tres carnes",
     description: "Pinchos con tres tipos de carne, vegetales y acompañamientos.",
-    price: 38000,
+    price: 18000,
     category: "Platos fuertes",
     image: pinchosTresCarnesImage,
     tag: "A la parrilla",
@@ -62,7 +62,7 @@ export const products = [
     id: "rollo-de-pollo-salsa-quesos",
     name: "Rollo de pollo en salsa de quesos",
     description: "Rollo de pollo bañado en salsa de quesos y servido con acompañamientos.",
-    price: 33000,
+    price: 23000,
     category: "Platos fuertes",
     image: rolloPolloImage,
     tag: "Especialidad",

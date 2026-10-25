@@ -14,6 +14,9 @@
 .assistant-message { max-width: 88%; margin: 0; padding: 10px 12px; border-radius: 12px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .82rem; line-height: 1.45; }
 .assistant-message.from-assistant { align-self: flex-start; border: 1px solid rgba(37, 43, 34, .09); background: white; }
 .assistant-message.from-user { align-self: flex-end; background: #e8f1e5; }
+.assistant-quick-prompts { padding: 0 12px 11px; display: flex; flex-wrap: wrap; gap: 7px; }
+.assistant-quick-prompts button { padding: 7px 10px; border: 1px solid rgba(87, 154, 98, .38); border-radius: 999px; background: white; color: #397445; font: 600 .68rem var(--font-body); cursor: pointer; }
+.assistant-quick-prompts button:disabled { opacity: .55; cursor: wait; }
 .assistant-composer { padding: 10px 12px; display: flex; gap: 8px; border-top: 1px solid rgba(37, 43, 34, .1); }
 .assistant-composer input, .assistant-track-form input { min-width: 0; min-height: 42px; padding: 9px 11px; border: 1px solid rgba(37, 43, 34, .22); border-radius: 7px; background: white; color: var(--ink); font: .8rem var(--font-body); }
 .assistant-composer input { flex: 1; }

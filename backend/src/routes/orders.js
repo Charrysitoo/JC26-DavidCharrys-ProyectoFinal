@@ -31,13 +31,9 @@ function validateOrder(body) {
   if (body.customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.customerEmail)) {
     errors.push("El correo electrónico no es válido.");
   }
-  if (!["delivery", "pickup"].includes(body.orderType)) {
-    errors.push("El tipo de pedido debe ser delivery o pickup.");
-  }
-  if (body.orderType === "delivery") {
-    if (!(body.deliveryAddress || "").trim()) errors.push("La dirección de entrega es obligatoria.");
-    if (!(body.neighborhood || "").trim()) errors.push("El barrio o zona es obligatorio.");
-  }
+  if (body.orderType !== "delivery") errors.push("Makarios solo recibe pedidos a domicilio.");
+  if (!(body.deliveryAddress || "").trim()) errors.push("La dirección de entrega es obligatoria.");
+  if (!(body.neighborhood || "").trim()) errors.push("El barrio o zona es obligatorio.");
 
   const items = Array.isArray(body.items) ? body.items : [];
   if (items.length === 0) errors.push("El pedido debe contener al menos un producto.");
@@ -56,9 +52,22 @@ function validateOrder(body) {
   return { errors, items, subtotal };
 }
 
+function isSundayInBogota() {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Bogota",
+    weekday: "short",
+  }).format(new Date()) === "Sun";
+}
+
 // POST /api/orders — crear pedido
 router.post("/", async (req, res, next) => {
   try {
+    if (isSundayInBogota()) {
+      return res.status(403).json({
+        ok: false,
+        errors: ["Los domingos no recibimos pedidos. Nuestro horario es de lunes a sábado, de 12:00 p. m. a 7:00 p. m."],
+      });
+    }
     const body = req.body || {};
     const { errors, items, subtotal } = validateOrder(body);
     if (errors.length) return res.status(400).json({ ok: false, errors });
@@ -68,7 +77,7 @@ router.post("/", async (req, res, next) => {
 
     const order = await store.createOrder({
       trackingTokenHash,
-      orderType: body.orderType,
+      orderType: "delivery",
       paymentMethod: ["cash", "transfer", "card"].includes(body.paymentMethod)
         ? body.paymentMethod
         : "cash",

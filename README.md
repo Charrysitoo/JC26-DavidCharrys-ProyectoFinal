@@ -36,7 +36,7 @@ El catálogo contiene estos seis productos:
 5. Pinchos tres carnes.
 6. Rollo de pollo en salsa de quesos.
 
-Tres productos se muestran como destacados en la página de inicio. Los precios actuales son provisionales y deben sustituirse por los precios confirmados del emprendimiento antes de publicar la aplicación.
+Tres productos se muestran como destacados en la página de inicio. Los precios del catálogo se mantienen centralizados en `frontend/src/products.js`.
 
 ## Tecnologías y arquitectura previstas
 
@@ -92,7 +92,7 @@ Estos comandos corresponden a un proyecto React configurado con Vite. Si el proy
 
 1. Finalizar y probar la interfaz pública.
 2. Confirmar y documentar cuál backend se desplegará como API compartida para el sitio público y el panel.
-3. Confirmar precios, ingredientes, alérgenos, disponibilidad y horarios para que el chatbot pueda responder con información de negocio verificada.
+3. Confirmar ingredientes, alérgenos, disponibilidad y cobertura de domicilios para que el chatbot pueda responder con información de negocio verificada.
 4. Configurar `GEMINI_API_KEY`, MongoDB y los orígenes CORS en el entorno de despliegue.
 5. Verificar autenticación, consulta privada de pedidos, cuotas y comportamiento del chatbot antes de publicar.
 6. Publicar las aplicaciones y monitorear el uso de Gemini.

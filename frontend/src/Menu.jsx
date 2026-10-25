@@ -61,14 +61,12 @@ export default function Menu() {
       />
 
       <section className="menu-hero">
-        <p className="eyebrow"><span className="eyebrow-dot" /> Hecho con sabor colombiano</p>
         <h1>El menú, <em>a tu manera.</em></h1>
         <p className="menu-hero-description">
-          Explora nuestros sabores, encuentra tu próximo antojo y descubre una
-          forma diferente de disfrutar los ingredientes de nuestra tierra.
+          ¿Con hambre? Revisa nuestras opciones, arma tu pedido y disfruta de lo que Makarios hace con amor para ti.
         </p>
         <div className="menu-hero-note" aria-hidden="true">
-          <span>BUEN SABOR</span><span className="menu-note-divider" /><span>BUEN ORIGEN</span>
+          <span>Mateo 5:5</span>
         </div>
       </section>
 
@@ -175,8 +173,8 @@ export default function Menu() {
         )}
 
         <p className="menu-data-note">
-          Los precios mostrados son valores de referencia provisionales y deben confirmarse
-          antes de publicar. El catálogo podrá administrarse desde el panel cuando conectemos el backend.
+          Los precios corresponden a cada producto. El valor del domicilio y la disponibilidad
+          se confirman al recibir tu pedido.
         </p>
       </section>
 
