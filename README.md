@@ -47,7 +47,7 @@ Tres productos se muestran como destacados en la página de inicio. Los precios 
 - **React Router:** navegación entre las páginas públicas.
 - **JavaScript:** gestión del catálogo, la interfaz y el estado del carrito en el frontend.
 
-### Backend, base de datos y aplicación privada — pendientes
+### Backend, base de datos y aplicación privada
 
 La arquitectura prevista contempla:
 
@@ -57,7 +57,11 @@ La arquitectura prevista contempla:
 - **Aplicación privada del personal:** inicio de sesión y panel para consultar y gestionar pedidos, productos y mensajes, con acceso restringido a personal autorizado.
 - **Chatbot de inteligencia artificial:** asistente para responder preguntas sobre el restaurante y recomendar platos a partir de la información real del catálogo.
 
-Estas funciones forman parte del plan de desarrollo, pero **todavía no deben considerarse implementadas**: en el estado actual, los formularios y el carrito son principalmente funciones del frontend. Los pedidos y mensajes aún necesitan conectarse a una API y guardarse en la base de datos para que el restaurante los reciba realmente.
+El repositorio incluye un backend Express con persistencia en MongoDB cuando se configura `MONGODB_URI`, y almacenamiento en memoria para desarrollo. Los formularios públicos ya envían pedidos y mensajes a la API. El panel administrativo se mantiene en el repositorio `FinalProject-AdminPanel`.
+
+El sitio también incluye un chatbot de orientación conectado a Gemini desde el backend. Para activarlo, configura `GEMINI_API_KEY` en el entorno del servidor (nunca en React) y, opcionalmente, `GEMINI_MODEL`. El asistente responde sobre el menú y la navegación; no recibe datos de pedidos ni información personal.
+
+Al crear un pedido, el servidor emite un código privado de seguimiento aleatorio. El cliente debe guardarlo junto con el número de pedido para consultar el estado en el asistente. El servidor conserva únicamente el hash del código y la consulta devuelve el estado y la fecha de actualización, sin exponer datos del cliente. Los pedidos creados antes de activar esta función no tienen código privado y no podrán consultarse por este mecanismo.
 
 ## Objetivo de integración
 
@@ -87,8 +91,8 @@ Estos comandos corresponden a un proyecto React configurado con Vite. Si el proy
 ## Próximas etapas
 
 1. Finalizar y probar la interfaz pública.
-2. Diseñar los modelos de datos y construir la API con Node.js y Express.
-3. Conectar el catálogo, el formulario de contacto y los pedidos con MongoDB Atlas mediante Mongoose.
-4. Desarrollar la aplicación privada y su autenticación.
-5. Integrar y probar el chatbot de IA.
-6. Realizar pruebas de seguridad y funcionamiento, y publicar las aplicaciones.
+2. Confirmar y documentar cuál backend se desplegará como API compartida para el sitio público y el panel.
+3. Confirmar precios, ingredientes, alérgenos, disponibilidad y horarios para que el chatbot pueda responder con información de negocio verificada.
+4. Configurar `GEMINI_API_KEY`, MongoDB y los orígenes CORS en el entorno de despliegue.
+5. Verificar autenticación, consulta privada de pedidos, cuotas y comportamiento del chatbot antes de publicar.
+6. Publicar las aplicaciones y monitorear el uso de Gemini.

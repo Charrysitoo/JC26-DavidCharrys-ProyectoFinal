@@ -32,6 +32,24 @@ async function listOrders() {
   return [...memory.orders].reverse();
 }
 
+async function findTrackableOrder(code, trackingTokenHash) {
+  if (isMongoConnected()) {
+    return Order.findOne({ code, trackingTokenHash })
+      .select("code status updatedAt createdAt")
+      .lean();
+  }
+  const order = memory.orders.find(
+    (entry) => entry.code === code && entry.trackingTokenHash === trackingTokenHash
+  );
+  if (!order) return null;
+  return {
+    code: order.code,
+    status: order.status,
+    createdAt: order.createdAt,
+    updatedAt: order.updatedAt || order.createdAt,
+  };
+}
+
 // ---------- Mensajes de contacto ----------
 async function createMessage(payload) {
   if (isMongoConnected()) {
@@ -53,4 +71,4 @@ async function listMessages() {
   return [...memory.messages].reverse();
 }
 
-module.exports = { createOrder, listOrders, createMessage, listMessages };
+module.exports = { createOrder, listOrders, findTrackableOrder, createMessage, listMessages };

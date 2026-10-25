@@ -1,0 +1,33 @@
+.makarios-assistant { position: fixed; z-index: 30; right: 24px; bottom: 24px; font-family: var(--font-body); }
+.assistant-launcher { min-height: 54px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--green); color: white; box-shadow: 0 8px 28px rgba(37, 43, 34, .22); font: 700 .9rem var(--font-body); cursor: pointer; }
+.assistant-launcher span { margin-right: 8px; }
+.assistant-panel { width: min(370px, calc(100vw - 32px)); height: min(570px, calc(100dvh - 104px)); margin-bottom: 12px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid rgba(37, 43, 34, .14); border-radius: 14px; background: #fffdf6; box-shadow: 0 14px 44px rgba(37, 43, 34, .2); }
+.assistant-header { min-height: 68px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: var(--green); color: white; }
+.assistant-header strong, .assistant-header small { display: block; }
+.assistant-header strong { font-size: .95rem; }
+.assistant-header small { margin-top: 3px; opacity: .85; font-size: .72rem; }
+.assistant-header button { width: 34px; height: 34px; border: 0; background: transparent; color: white; font-size: 1.7rem; cursor: pointer; }
+.assistant-tabs { display: flex; border-bottom: 1px solid rgba(37, 43, 34, .12); }
+.assistant-tabs button { flex: 1; min-height: 42px; border: 0; background: transparent; color: var(--muted); font: 600 .76rem var(--font-body); cursor: pointer; }
+.assistant-tabs button[aria-selected="true"] { color: #397445; box-shadow: inset 0 -2px #579a62; }
+.assistant-messages { flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 9px; overflow: auto; }
+.assistant-message { max-width: 88%; margin: 0; padding: 10px 12px; border-radius: 12px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .82rem; line-height: 1.45; }
+.assistant-message.from-assistant { align-self: flex-start; border: 1px solid rgba(37, 43, 34, .09); background: white; }
+.assistant-message.from-user { align-self: flex-end; background: #e8f1e5; }
+.assistant-composer { padding: 10px 12px; display: flex; gap: 8px; border-top: 1px solid rgba(37, 43, 34, .1); }
+.assistant-composer input, .assistant-track-form input { min-width: 0; min-height: 42px; padding: 9px 11px; border: 1px solid rgba(37, 43, 34, .22); border-radius: 7px; background: white; color: var(--ink); font: .8rem var(--font-body); }
+.assistant-composer input { flex: 1; }
+.assistant-composer button, .assistant-track-form > button { min-height: 42px; padding: 0 13px; border: 0; border-radius: 7px; background: var(--green); color: white; font: 700 .78rem var(--font-body); cursor: pointer; }
+.assistant-composer button:disabled, .assistant-track-form > button:disabled { opacity: .55; cursor: wait; }
+.assistant-disclaimer { padding: 0 14px 11px; color: var(--muted); font-size: .65rem; line-height: 1.4; }
+.assistant-track-form { padding: 16px; display: flex; flex-direction: column; gap: 13px; overflow: auto; }
+.assistant-track-form p { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.5; }
+.assistant-track-form label { display: flex; flex-direction: column; gap: 6px; font-size: .75rem; font-weight: 700; }
+.assistant-track-form > button { margin-top: 2px; }
+.assistant-error, .assistant-success { margin: 0; padding: 9px 12px; font-size: .75rem; line-height: 1.4; }
+.assistant-error { color: #8c2e23; background: #fff0ed; }
+.assistant-success { color: #286837 !important; background: #edf7ec; border-radius: 7px; }
+@media (max-width: 520px) {
+  .makarios-assistant { right: 16px; bottom: 16px; }
+  .assistant-panel { height: min(570px, calc(100dvh - 90px)); }
+}

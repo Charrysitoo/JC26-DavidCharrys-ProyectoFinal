@@ -66,12 +66,13 @@ export default function Order() {
           quantity: item.quantity,
         })),
       };
-      const { order } = await submitOrder(payload);
+      const { order, trackingToken } = await submitOrder(payload);
       setConfirmation(
-        `¡Listo! Registramos tu pedido ${order.code}. Lo estamos revisando y te contactaremos muy pronto al ${order.customer.phone} para confirmar disponibilidad, tiempo de entrega y el valor del domicilio.`
+        `¡Listo! Registramos tu pedido ${order.code}. Guarda también este código privado de seguimiento: ${trackingToken}. Lo necesitarás para consultar el estado. Te contactaremos al ${order.customer.phone} para confirmar disponibilidad, tiempo de entrega y el valor del domicilio.`
       );
       form.reset();
-      updateCart([]);
+      setCart([]);
+      writeCart([]);
     } catch (error) {
       setErrorMessage(error.message);
     } finally {

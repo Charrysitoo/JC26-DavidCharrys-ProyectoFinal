@@ -1,7 +1,24 @@
 const express = require("express");
+const crypto = require("crypto");
 const store = require("../store");
 
 const router = express.Router();
+const trackingAttempts = new Map();
+
+function limitTrackingAttempts(req, res, next) {
+  const now = Date.now();
+  const key = req.ip || req.socket.remoteAddress || "unknown";
+  const current = trackingAttempts.get(key);
+  if (!current || current.resetAt <= now) {
+    trackingAttempts.set(key, { count: 1, resetAt: now + 15 * 60_000 });
+    return next();
+  }
+  if (current.count >= 20) {
+    return res.status(429).json({ ok: false, errors: ["Se alcanzó el límite de consultas. Inténtalo más tarde."] });
+  }
+  current.count += 1;
+  return next();
+}
 
 // Validación ligera en el servidor (espejo de lo que ya valida el formulario).
 function validateOrder(body) {
@@ -46,7 +63,11 @@ router.post("/", async (req, res, next) => {
     const { errors, items, subtotal } = validateOrder(body);
     if (errors.length) return res.status(400).json({ ok: false, errors });
 
+    const trackingToken = crypto.randomBytes(32).toString("base64url");
+    const trackingTokenHash = crypto.createHash("sha256").update(trackingToken).digest("hex");
+
     const order = await store.createOrder({
+      trackingTokenHash,
       orderType: body.orderType,
       paymentMethod: ["cash", "transfer", "card"].includes(body.paymentMethod)
         ? body.paymentMethod
@@ -69,7 +90,34 @@ router.post("/", async (req, res, next) => {
       notes: (body.orderNotes || "").trim().slice(0, 500) || undefined,
     });
 
-    res.status(201).json({ ok: true, order });
+    res.status(201).json({
+      ok: true,
+      order: {
+        code: order.code,
+        status: order.status,
+        customer: { phone: order.customer.phone },
+      },
+      trackingToken,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/orders/track — el token aleatorio funciona como credencial privada.
+router.post("/track", limitTrackingAttempts, async (req, res, next) => {
+  try {
+    const code = String(req.body?.code || "").trim().toUpperCase();
+    const token = String(req.body?.trackingToken || "").trim();
+    if (!/^MK-[A-Z0-9-]{8,40}$/.test(code) || !/^[A-Za-z0-9_-]{40,50}$/.test(token)) {
+      return res.status(404).json({ ok: false, errors: ["No encontramos un pedido con esos datos."] });
+    }
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const order = await store.findTrackableOrder(code, tokenHash);
+    if (!order) {
+      return res.status(404).json({ ok: false, errors: ["No encontramos un pedido con esos datos."] });
+    }
+    res.json({ ok: true, order });
   } catch (err) {
     next(err);
   }

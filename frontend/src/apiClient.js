@@ -40,3 +40,14 @@ export function submitOrder(payload) {
 export function submitContactMessage(payload) {
   return request("/messages", { method: "POST", body: JSON.stringify(payload) });
 }
+
+export function sendChatMessage(messages) {
+  return request("/chat", { method: "POST", body: JSON.stringify({ messages }) });
+}
+
+export function trackOrder(code, trackingToken) {
+  return request("/orders/track", {
+    method: "POST",
+    body: JSON.stringify({ code, trackingToken }),
+  });
+}

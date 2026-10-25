@@ -5,6 +5,7 @@ const cors = require("cors");
 const { connectDb } = require("./src/db");
 const ordersRouter = require("./src/routes/orders");
 const messagesRouter = require("./src/routes/messages");
+const chatRouter = require("./src/routes/chat");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -19,6 +20,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/orders", ordersRouter);
 app.use("/api/messages", messagesRouter);
+app.use("/api/chat", chatRouter);
 
 // 404 para rutas desconocidas de la API.
 app.use((req, res) => {

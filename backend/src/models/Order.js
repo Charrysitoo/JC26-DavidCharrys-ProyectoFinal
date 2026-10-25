@@ -13,6 +13,8 @@ const orderItemSchema = new mongoose.Schema(
 const orderSchema = new mongoose.Schema(
   {
     code: { type: String, required: true, unique: true },
+    // Se entrega al cliente una sola vez; solo se conserva su hash para consultar el estado.
+    trackingTokenHash: { type: String, select: false },
     status: {
       type: String,
       enum: ["pending", "confirmed", "preparing", "delivered", "cancelled"],
