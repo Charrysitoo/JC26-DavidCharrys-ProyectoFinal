@@ -228,6 +228,11 @@
   line-height: 1.7;
 }
 
+.contact-status-error {
+  border-left-color: #b3372e;
+  background: rgba(179, 55, 46, 0.09);
+}
+
 @media (max-width: 900px) {
   .contact-hero,
   .contact-content {
