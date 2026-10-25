@@ -1,15 +1,23 @@
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+
 import Home from "./Home";
 import Menu from "./Menu";
 import Order from "./Order";
 import Contact from "./Contact";
 
-// Rutas sencillas para la demo. En producción, configura el hosting para
-// redirigir las rutas desconocidas a index.html (SPA fallback).
 export default function App() {
-  const path = window.location.pathname.replace(/\/+$/, "") || "/";
-
-  if (path === "/menu") return <Menu />;
-  if (path === "/pedidos") return <Order />;
-  if (path === "/contacto") return <Contact />;
-  return <Home />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/pedidos" element={<Order />} />
+        <Route path="/contacto" element={<Contact />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }

@@ -129,29 +129,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="story-section" id="nosotros">
-        <div className="story-decoration" aria-hidden="true">SABOR<br />DE AQUÍ</div>
-        <div className="story-content">
-          <p className="eyebrow">Nuestra esencia</p>
-          <h2>Colombia en la raíz.<br /><em>Creatividad en el plato.</em></h2>
-          <p>
-            Creemos que la comida rápida también puede tener origen, cuidado y
-            personalidad. Por eso celebramos los ingredientes de nuestra tierra
-            y los transformamos en platos generosos, actuales y llenos de sabor.
-          </p>
-          <a className="text-link story-link" href="#contacto">
-            Ven a conocernos <span aria-hidden="true">→</span>
-          </a>
-        </div>
-        <div className="story-image">
-          <img
-            src="/images/cocina-colombiana.png"
-            alt="Ingredientes frescos utilizados en la cocina"
-            loading="lazy"
-          />
-        </div>
-      </section>
-
       <section className="order-cta" id="contacto">
         <div>
           <p className="eyebrow">Tu próximo antojo comienza aquí</p>
