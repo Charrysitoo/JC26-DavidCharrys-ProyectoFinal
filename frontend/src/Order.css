@@ -289,6 +289,7 @@
 .order-submit-hint { margin: 9px 0 0; color: var(--muted); text-align: center; font-size: .7rem; }
 .order-privacy-note { margin: 13px 0 0; color: var(--muted); font-size: .65rem; line-height: 1.6; }
 .order-status-message { margin-top: 16px; padding: 13px; border-left: 3px solid var(--green); background: rgba(87, 154, 98, .09); color: var(--ink); font-size: .74rem; line-height: 1.65; }
+.order-error-message { border-left-color: #b3372e; background: rgba(179, 55, 46, .09); }
 .order-help-strip {
   display: flex;
   align-items: center;

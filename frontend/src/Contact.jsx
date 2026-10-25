@@ -2,19 +2,45 @@ import { useEffect, useState } from "react";
 import "./Contact.css";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import { submitContactMessage } from "./apiClient";
 
 export default function Contact() {
   const [status, setStatus] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     document.title = "Contacto - Makarios Company";
   }, []);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setStatus(
-      "Formulario validado. En esta versión de demostración el mensaje todavía no se envía al restaurante; esa función se activará al conectar el backend."
-    );
+    if (isSubmitting) return;
+
+    const form = event.currentTarget;
+    const data = new FormData(form);
+
+    setIsSubmitting(true);
+    setStatus("");
+    try {
+      await submitContactMessage({
+        firstName: data.get("firstName"),
+        lastName: data.get("lastName"),
+        email: data.get("email"),
+        phone: data.get("phone"),
+        message: data.get("message"),
+      });
+      setIsError(false);
+      setStatus(
+        "Mensaje recibido. Gracias por escribirnos: te responderemos muy pronto al correo indicado."
+      );
+      form.reset();
+    } catch (error) {
+      setIsError(true);
+      setStatus(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -131,14 +157,18 @@ export default function Contact() {
           </div>
 
           <div className="contact-form-bottom">
-            <button className="button button-primary contact-submit" type="submit">
-              Enviar mensaje <span aria-hidden="true">→</span>
+            <button className="button button-primary contact-submit" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Enviando mensaje..." : "Enviar mensaje"} <span aria-hidden="true">→</span>
             </button>
             <p>Usaremos tus datos únicamente para atender tu mensaje.</p>
           </div>
 
           {status && (
-            <div className="contact-status" role="status" aria-live="polite">
+            <div
+              className={`contact-status${isError ? " contact-status-error" : ""}`}
+              role={isError ? "alert" : "status"}
+              aria-live="polite"
+            >
               {status}
             </div>
           )}

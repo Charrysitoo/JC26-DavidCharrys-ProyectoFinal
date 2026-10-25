@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import "./Order.css";
 import { products, formatPrice } from "./products";
 import { readCart, writeCart } from "./cartStorage";
+import { submitOrder } from "./apiClient";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 
@@ -13,6 +14,8 @@ export default function Order() {
   const [orderType, setOrderType] = useState("delivery");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [confirmation, setConfirmation] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const selectedItems = useMemo(
     () => cart
@@ -31,6 +34,49 @@ export default function Order() {
     setCart(nextCart);
     writeCart(nextCart);
     setConfirmation("");
+    setErrorMessage("");
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (selectedItems.length === 0 || isSubmitting) return;
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+    setConfirmation("");
+    try {
+      const payload = {
+        orderType,
+        paymentMethod,
+        customerName: formData.get("customerName"),
+        customerPhone: formData.get("customerPhone"),
+        customerEmail: formData.get("customerEmail") || "",
+        deliveryAddress: formData.get("deliveryAddress") || "",
+        neighborhood: formData.get("neighborhood") || "",
+        deliveryReference: formData.get("deliveryReference") || "",
+        orderNotes: formData.get("orderNotes") || "",
+        subtotal,
+        items: selectedItems.map((item) => ({
+          productId: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      };
+      const { order } = await submitOrder(payload);
+      setConfirmation(
+        `¡Listo! Registramos tu pedido ${order.code}. Lo estamos revisando y te contactaremos muy pronto al ${order.customer.phone} para confirmar disponibilidad, tiempo de entrega y el valor del domicilio.`
+      );
+      form.reset();
+      updateCart([]);
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function addProduct(productId) {
@@ -55,13 +101,6 @@ export default function Order() {
 
   function removeProduct(productId) {
     updateCart(cart.filter((item) => item.id !== productId));
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    setConfirmation(
-      "Tus datos fueron validados en esta página. El pedido todavía no se ha enviado al restaurante: falta conectar el backend o un canal real de recepción."
-    );
   }
 
   return (
@@ -238,13 +277,22 @@ export default function Order() {
               <p>El valor del domicilio, la disponibilidad y el tiempo de entrega se confirmarán antes de aceptar el pedido.</p>
             </div>
 
-            {confirmation && <div className="order-status-message" role="status">{confirmation}</div>}
+            {confirmation && (
+              <div className="order-status-message order-success-message" role="status">
+                {confirmation}
+              </div>
+            )}
+            {errorMessage && (
+              <div className="order-status-message order-error-message" role="alert">
+                {errorMessage}
+              </div>
+            )}
 
-            <button className="order-submit-button" type="submit" disabled={selectedItems.length === 0}>
-              Revisar mi pedido <span aria-hidden="true">→</span>
+            <button className="order-submit-button" type="submit" disabled={selectedItems.length === 0 || isSubmitting}>
+              {isSubmitting ? "Enviando pedido..." : "Enviar mi pedido"} <span aria-hidden="true">→</span>
             </button>
             {selectedItems.length === 0 && <p className="order-submit-hint">Agrega al menos un plato para continuar.</p>}
-            <p className="order-privacy-note">Tus datos se utilizan aquí solo para esta demostración. El envío real del pedido requiere conectar un servidor seguro.</p>
+            <p className="order-privacy-note">Tus datos se envían de forma segura al sistema del restaurante y se utilizan únicamente para preparar y entregar tu pedido.</p>
           </form>
         </aside>
       </div>
