@@ -1,4 +1,3 @@
-import React from "react";
 import "./Home.css";
 import mainImage from "./assets/Main-Image.jpg";
 import SiteHeader from "./components/SiteHeader";

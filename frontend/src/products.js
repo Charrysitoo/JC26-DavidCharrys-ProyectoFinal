@@ -1,36 +1,76 @@
-// Catálogo compartido por la página de menú y la página de pedidos.
-// Estos datos son de demostración; más adelante pueden venir de la API.
+// Catálogo compartido por Inicio, Menú y Pedidos.
+// Los precios son valores de referencia provisionales: deben confirmarse antes de publicar.
+import tablaDeQuesosImage from "./assets/menu/tabla-de-quesos.jpg";
+import costillaBBQImage from "./assets/menu/costilla-de-cerdo-bbq.jpg";
+import lomoAgridulceImage from "./assets/menu/lomo-de-cerdo-agridulce.jpg";
+import picadaTresCarnesImage from "./assets/menu/picada-tres-carnes.jpg";
+import pinchosTresCarnesImage from "./assets/menu/pinchos-tres-carnes.jpg";
+import rolloPolloImage from "./assets/menu/rollo-de-pollo-salsa-quesos.jpg";
+
 export const products = [
   {
-    id: "burger-criollo",
-    name: "Burger criollo",
-    description: "Carne jugosa, queso, vegetales frescos y salsa de la casa.",
-    price: 24000,
-    category: "Hamburguesas",
-    image: "/images/burger-criollo.png",
-    tag: "Favorito",
+    id: "tabla-de-quesos",
+    name: "Tabla de quesos",
+    description: "Una selección para compartir de quesos, carnes frías, frutas y acompañamientos.",
+    price: 38000,
+    category: "Entradas",
+    image: tablaDeQuesosImage,
+    tag: "Para compartir",
+    featured: true,
   },
   {
-    id: "arepa-gourmet",
-    name: "Arepa gourmet",
-    description: "Arepa dorada con relleno generoso e ingredientes locales.",
-    price: 18000,
-    category: "Arepas",
-    image: "/images/arepa-gourmet.png",
-    tag: "Tradición",
-  },
-  {
-    id: "patacon-especial",
-    name: "Patacón especial",
-    description: "Patacón crujiente con una combinación fresca y sabrosa.",
-    price: 22000,
-    category: "Patacones",
-    image: "/images/patacon-especial.png",
+    id: "costilla-de-cerdo-bbq",
+    name: "Costilla de cerdo en salsa BBQ",
+    description: "Costilla de cerdo cubierta con salsa BBQ y servida con acompañamientos.",
+    price: 32000,
+    category: "Platos fuertes",
+    image: costillaBBQImage,
     tag: "De la casa",
+    featured: true,
+  },
+  {
+    id: "lomo-de-cerdo-agridulce",
+    name: "Lomo de cerdo en salsa agridulce",
+    description: "Lomo de cerdo en salsa agridulce, acompañado con guarniciones.",
+    price: 30000,
+    category: "Platos fuertes",
+    image: lomoAgridulceImage,
+    tag: "Sabor especial",
+    featured: false,
+  },
+  {
+    id: "picada-tres-carnes",
+    name: "Picada tres carnes",
+    description: "Una combinación de carnes y acompañamientos, ideal para compartir.",
+    price: 58000,
+    category: "Para compartir",
+    image: picadaTresCarnesImage,
+    tag: "Favorita para compartir",
+    featured: true,
+  },
+  {
+    id: "pinchos-tres-carnes",
+    name: "Pinchos tres carnes",
+    description: "Pinchos con tres tipos de carne, vegetales y acompañamientos.",
+    price: 38000,
+    category: "Platos fuertes",
+    image: pinchosTresCarnesImage,
+    tag: "A la parrilla",
+    featured: false,
+  },
+  {
+    id: "rollo-de-pollo-salsa-quesos",
+    name: "Rollo de pollo en salsa de quesos",
+    description: "Rollo de pollo bañado en salsa de quesos y servido con acompañamientos.",
+    price: 33000,
+    category: "Platos fuertes",
+    image: rolloPolloImage,
+    tag: "Especialidad",
+    featured: false,
   },
 ];
 
-export const categories = ["Todos", "Hamburguesas", "Arepas", "Patacones"];
+export const categories = ["Todos", "Entradas", "Platos fuertes", "Para compartir"];
 
 export const formatPrice = (price) =>
   new Intl.NumberFormat("es-CO", {

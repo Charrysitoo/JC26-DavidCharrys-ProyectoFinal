@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import "./Menu.css";
 import { products, categories, formatPrice } from "./products";
 import { readCart, writeCart } from "./cartStorage";
@@ -175,8 +175,8 @@ export default function Menu() {
         )}
 
         <p className="menu-data-note">
-          Catálogo inicial de muestra: los platos, precios, descripciones e imágenes
-          se podrán editar desde el panel de administración cuando conectemos el backend.
+          Los precios mostrados son valores de referencia provisionales y deben confirmarse
+          antes de publicar. El catálogo podrá administrarse desde el panel cuando conectemos el backend.
         </p>
       </section>
 
@@ -189,7 +189,7 @@ export default function Menu() {
           <a className="button button-light" href="/pedidos">
             Realizar pedido <span aria-hidden="true">↗</span>
           </a>
-          <a className="menu-banner-contact" href="/#contacto">Contactar al restaurante</a>
+          <a className="menu-banner-contact" href="/contacto">Contactar al restaurante</a>
         </div>
       </section>
 

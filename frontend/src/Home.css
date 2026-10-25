@@ -27,7 +27,6 @@
 
 .hero h1,
 .section-heading h2,
-.story-content h2,
 .order-cta h2 {
   margin: 0;
   font-family: var(--font-display);
@@ -42,7 +41,6 @@
 
 .hero h1 em,
 .section-heading h2 em,
-.story-content h2 em,
 .order-cta h2 em {
   color: var(--green);
   font-weight: 500;
@@ -225,13 +223,11 @@
 }
 
 .section-heading .eyebrow,
-.story-content .eyebrow,
 .order-cta .eyebrow {
   margin-bottom: 15px;
 }
 
 .section-heading h2,
-.story-content h2,
 .order-cta h2 {
   font-size: clamp(2.4rem, 4.4vw, 4rem);
 }
@@ -335,6 +331,13 @@
   transition: color 180ms ease;
 }
 
+.home-price-note {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.6;
+}
+
 .menu-bottom {
   margin-top: 36px;
   display: flex;
@@ -357,60 +360,6 @@
 .button-outline:hover {
   background: var(--green);
   color: var(--white);
-}
-
-.story-section {
-  min-height: 470px;
-  padding: 75px max(32px, calc((100% - 1216px) / 2));
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 0.85fr;
-  align-items: center;
-  gap: clamp(40px, 8vw, 110px);
-  background: #eeeddf;
-}
-
-.story-content {
-  max-width: 560px;
-  position: relative;
-  z-index: 1;
-}
-
-.story-content > p:not(.eyebrow) {
-  max-width: 490px;
-  margin: 23px 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.9;
-}
-
-.story-link {
-  margin-top: 3px;
-}
-
-.story-image {
-  height: 350px;
-  overflow: hidden;
-  background: var(--sage);
-  border-radius: 4px 90px 4px 4px;
-}
-
-.story-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.story-decoration {
-  position: absolute;
-  right: 42%;
-  bottom: 26px;
-  color: rgba(87, 154, 98, 0.1);
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 7vw, 7rem);
-  font-weight: 700;
-  line-height: 0.8;
-  pointer-events: none;
 }
 
 .order-cta {
@@ -495,7 +444,6 @@
     gap: 7px;
   }
 
-  .story-section,
   .order-cta {
     padding-right: 32px;
     padding-left: 32px;
@@ -576,7 +524,6 @@
   }
 
   .section-heading h2,
-  .story-content h2,
   .order-cta h2 {
     font-size: clamp(2.5rem, 11vw, 3.5rem);
   }
@@ -606,22 +553,6 @@
   .menu-bottom {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .story-section {
-    padding: 60px 22px;
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-
-  .story-image {
-    height: 280px;
-  }
-
-  .story-decoration {
-    right: 8px;
-    bottom: 15px;
-    font-size: 4rem;
   }
 
   .order-cta {

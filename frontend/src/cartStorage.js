@@ -1,6 +1,6 @@
 // El carrito se guarda solo en el navegador para poder pasar del menú a pedidos.
 // No se envía a ningún servidor hasta conectar el backend.
-const CART_STORAGE_KEY = "restaurante-carrito-v1";
+const CART_STORAGE_KEY = "restaurante-carrito-v2";
 
 export function readCart() {
   if (typeof window === "undefined") return [];

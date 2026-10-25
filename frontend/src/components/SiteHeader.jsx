@@ -12,8 +12,6 @@ export default function SiteHeader({
   actionAriaLabel,
 }) {
   const homeHref = activePage === "home" ? "#inicio" : "/#inicio";
-  const aboutHref = activePage === "home" ? "#nosotros" : "/#nosotros";
-  const contactHref = activePage === "home" ? "#contacto" : "/#contacto";
 
   return (
     <header className="site-header">
@@ -32,8 +30,7 @@ export default function SiteHeader({
         <a href="/menu" aria-current={activePage === "menu" ? "page" : undefined}>
           Menú
         </a>
-        <a href={aboutHref}>Nuestra esencia</a>
-        <a href={contactHref}>Contacto</a>
+        <a href="/contacto" aria-current={activePage === "contact" ? "page" : undefined}>Contacto</a>
       </nav>
 
       <a

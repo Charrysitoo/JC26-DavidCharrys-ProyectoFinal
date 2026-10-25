@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import "./Order.css";
 import { products, formatPrice } from "./products";
 import { readCart, writeCart } from "./cartStorage";
@@ -119,7 +119,7 @@ export default function Order() {
                 );
               })}
             </div>
-            <p className="order-catalog-note">Los platos y precios mostrados son datos iniciales de demostración y se podrán administrar desde el panel del restaurante.</p>
+            <p className="order-catalog-note">Los precios son valores de referencia provisionales y deben confirmarse antes de publicar.</p>
           </section>
 
           <section className="order-section cart-section" aria-labelledby="cart-title">
@@ -251,7 +251,7 @@ export default function Order() {
 
       <section className="order-help-strip">
         <div><span aria-hidden="true">✳</span><p><strong>¿Tienes una pregunta?</strong><br />La página de contacto sigue siendo independiente para consultas generales.</p></div>
-        <a href="/#contacto">Ir a contacto <span aria-hidden="true">↗</span></a>
+        <a href="/contacto">Ir a contacto <span aria-hidden="true">↗</span></a>
       </section>
 
       <SiteFooter
