@@ -38,14 +38,4 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// GET /api/messages — listado (para el futuro panel privado)
-router.get("/", async (req, res, next) => {
-  try {
-    const messages = await store.listMessages();
-    res.json({ ok: true, count: messages.length, messages });
-  } catch (err) {
-    next(err);
-  }
-});
-
 module.exports = router;

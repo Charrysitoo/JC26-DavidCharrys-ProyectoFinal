@@ -3,7 +3,7 @@ import "./Order.css";
 import { products, formatPrice } from "./products";
 import { readCart, writeCart } from "./cartStorage";
 import { submitOrder } from "./apiClient";
-import { isSundayInBogota } from "./businessHours";
+import { isWithinBusinessHoursInBogota } from "./businessHours";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 
@@ -12,14 +12,14 @@ export default function Order() {
         document.title = 'Realizar Pedido - Makarios Company';
       }, []);
   const [cart, setCart] = useState(() => readCart());
-  const [isClosedSunday, setIsClosedSunday] = useState(isSundayInBogota);
+  const [isAcceptingOrders, setIsAcceptingOrders] = useState(isWithinBusinessHoursInBogota);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [confirmation, setConfirmation] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setIsClosedSunday(isSundayInBogota()), 60_000);
+    const timer = window.setInterval(() => setIsAcceptingOrders(isWithinBusinessHoursInBogota()), 60_000);
     return () => window.clearInterval(timer);
   }, []);
 
@@ -45,9 +45,9 @@ export default function Order() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    if (isSundayInBogota()) {
-      setIsClosedSunday(true);
-      setErrorMessage("Los domingos no recibimos pedidos. Puedes volver a intentarlo de lunes a sábado, de 12:00 p. m. a 7:00 p. m.");
+    if (!isWithinBusinessHoursInBogota()) {
+      setIsAcceptingOrders(false);
+      setErrorMessage("En este momento no recibimos pedidos. Puedes volver a intentarlo de lunes a sábado, de 12:00 p. m. a 7:00 p. m.");
       return;
     }
     if (selectedItems.length === 0 || isSubmitting) return;
@@ -136,9 +136,9 @@ export default function Order() {
           <span><b>02</b> Completa tus datos</span>
           <span><b>03</b> Revisa el resumen</span>
         </div>
-        <p className={`order-hours-note${isClosedSunday ? " is-closed" : ""}`}>
-          {isClosedSunday
-            ? "Hoy domingo no recibimos pedidos. Volvemos el lunes a las 12:00 p. m."
+        <p className={`order-hours-note${!isAcceptingOrders ? " is-closed" : ""}`}>
+          {!isAcceptingOrders
+            ? "Ahora no recibimos pedidos. Atendemos de lunes a sábado, de 12:00 p. m. a 7:00 p. m. (hora de Colombia)."
             : "Horario de atención: lunes a sábado, de 12:00 p. m. a 7:00 p. m. (hora de Colombia)."}
         </p>
       </section>
@@ -287,10 +287,10 @@ export default function Order() {
               </div>
             )}
 
-            <button className="order-submit-button" type="submit" disabled={selectedItems.length === 0 || isSubmitting || isClosedSunday}>
+            <button className="order-submit-button" type="submit" disabled={selectedItems.length === 0 || isSubmitting || !isAcceptingOrders}>
               {isSubmitting ? "Enviando pedido..." : "Enviar mi pedido"} <span aria-hidden="true">→</span>
             </button>
-            {isClosedSunday ? (
+            {!isAcceptingOrders ? (
               <p className="order-submit-hint">Los pedidos se habilitan de lunes a sábado, de 12:00 p. m. a 7:00 p. m.</p>
             ) : selectedItems.length === 0 && <p className="order-submit-hint">Agrega al menos un plato para continuar.</p>}
             <p className="order-privacy-note">Tus datos se envían de forma segura al sistema del restaurante y se utilizan únicamente para preparar y entregar tu pedido.</p>

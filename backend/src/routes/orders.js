@@ -52,20 +52,26 @@ function validateOrder(body) {
   return { errors, items, subtotal };
 }
 
-function isSundayInBogota() {
-  return new Intl.DateTimeFormat("en-US", {
+function isWithinBusinessHoursInBogota(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Bogota",
     weekday: "short",
-  }).format(new Date()) === "Sun";
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  const minutes = Number(values.hour) * 60 + Number(values.minute);
+  return values.weekday !== "Sun" && minutes >= 12 * 60 && minutes < 19 * 60;
 }
 
 // POST /api/orders — crear pedido
 router.post("/", async (req, res, next) => {
   try {
-    if (isSundayInBogota()) {
+    if (!isWithinBusinessHoursInBogota()) {
       return res.status(403).json({
         ok: false,
-        errors: ["Los domingos no recibimos pedidos. Nuestro horario es de lunes a sábado, de 12:00 p. m. a 7:00 p. m."],
+        errors: ["En este momento no recibimos pedidos. Nuestro horario es de lunes a sábado, de 12:00 p. m. a 7:00 p. m. (hora de Colombia)."],
       });
     }
     const body = req.body || {};
@@ -127,16 +133,6 @@ router.post("/track", limitTrackingAttempts, async (req, res, next) => {
       return res.status(404).json({ ok: false, errors: ["No encontramos un pedido con esos datos."] });
     }
     res.json({ ok: true, order });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// GET /api/orders — listado (protegido más adelante con el panel privado)
-router.get("/", async (req, res, next) => {
-  try {
-    const orders = await store.listOrders();
-    res.json({ ok: true, count: orders.length, orders });
   } catch (err) {
     next(err);
   }
