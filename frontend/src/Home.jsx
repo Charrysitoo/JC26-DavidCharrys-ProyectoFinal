@@ -138,9 +138,8 @@ export default function Home() {
             Escríbenos para consultar el menú, conocer nuestros horarios o
             preguntar por las opciones para pedir.
           </p>
-          {/* Reemplaza el enlace por el WhatsApp, teléfono o sistema de pedidos real. */}
-          <a className="button button-light" href="mailto:hola@turestaurante.com">
-            Hablemos de comida <span aria-hidden="true">↗</span>
+          <a className="button button-light" href="/contacto">
+            Contactar al restaurante <span aria-hidden="true">↗</span>
           </a>
         </div>
       </section>

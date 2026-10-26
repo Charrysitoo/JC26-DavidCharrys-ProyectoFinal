@@ -9,8 +9,22 @@ const chatRouter = require("./src/routes/chat");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const configuredCorsOrigin = process.env.CORS_ORIGIN;
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
+if (process.env.NODE_ENV === "production" && !configuredCorsOrigin?.trim()) {
+  throw new Error("CORS_ORIGIN es obligatoria en producción.");
+}
+
+const corsOrigins = (configuredCorsOrigin || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+if (process.env.NODE_ENV === "production" && corsOrigins.length === 0) {
+  throw new Error("CORS_ORIGIN es obligatoria en producción.");
+}
+
+app.use(cors({ origin: corsOrigins }));
 app.use(express.json({ limit: "100kb" }));
 
 // Healthcheck sencillo para verificar la API.
@@ -35,7 +49,7 @@ app.use((err, req, res, next) => {
 
 connectDb()
   .then(() => {
-    app.listen(PORT, () => console.log(`Makarios API escuchando en http://localhost:${PORT}`));
+    app.listen(PORT, () => console.log(`Makarios API escuchando en el puerto ${PORT}`));
   })
   .catch((err) => {
     console.error("No se pudo conectar a MongoDB:", err.message);

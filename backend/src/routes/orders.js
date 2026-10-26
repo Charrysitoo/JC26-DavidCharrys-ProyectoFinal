@@ -1,55 +1,67 @@
 const express = require("express");
 const crypto = require("crypto");
 const store = require("../store");
+const { productsById } = require("../catalog");
+const { createRateLimiter } = require("../middleware/rateLimit");
 
 const router = express.Router();
-const trackingAttempts = new Map();
+const limitOrderCreation = createRateLimiter({
+  windowMs: 15 * 60_000,
+  max: 10,
+  message: "Se alcanzó el límite de pedidos. Inténtalo más tarde.",
+});
+const limitTrackingAttempts = createRateLimiter({
+  windowMs: 15 * 60_000,
+  max: 20,
+  message: "Se alcanzó el límite de consultas. Inténtalo más tarde.",
+});
 
-function limitTrackingAttempts(req, res, next) {
-  const now = Date.now();
-  const key = req.ip || req.socket.remoteAddress || "unknown";
-  const current = trackingAttempts.get(key);
-  if (!current || current.resetAt <= now) {
-    trackingAttempts.set(key, { count: 1, resetAt: now + 15 * 60_000 });
-    return next();
-  }
-  if (current.count >= 20) {
-    return res.status(429).json({ ok: false, errors: ["Se alcanzó el límite de consultas. Inténtalo más tarde."] });
-  }
-  current.count += 1;
-  return next();
-}
-
-// Validación ligera en el servidor (espejo de lo que ya valida el formulario).
+// El servidor valida la solicitud y obtiene precios y nombres del catálogo autoritativo.
 function validateOrder(body) {
   const errors = [];
-  const name = (body.customerName || "").trim();
-  const phone = (body.customerPhone || "").trim();
+  const name = typeof body.customerName === "string" ? body.customerName.trim() : "";
+  const phone = typeof body.customerPhone === "string" ? body.customerPhone.trim() : "";
+  const email = typeof body.customerEmail === "string" ? body.customerEmail.trim() : "";
+  const address = typeof body.deliveryAddress === "string" ? body.deliveryAddress.trim() : "";
+  const neighborhood = typeof body.neighborhood === "string" ? body.neighborhood.trim() : "";
+  const reference = typeof body.deliveryReference === "string" ? body.deliveryReference.trim() : "";
+  const notes = typeof body.orderNotes === "string" ? body.orderNotes.trim().slice(0, 500) : "";
 
   if (name.length < 2) errors.push("El nombre es obligatorio (mínimo 2 caracteres).");
   if (!/^[\d+() -]{7,20}$/.test(phone)) errors.push("El teléfono no tiene un formato válido.");
-  if (body.customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.customerEmail)) {
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errors.push("El correo electrónico no es válido.");
   }
   if (body.orderType !== "delivery") errors.push("Makarios solo recibe pedidos a domicilio.");
-  if (!(body.deliveryAddress || "").trim()) errors.push("La dirección de entrega es obligatoria.");
-  if (!(body.neighborhood || "").trim()) errors.push("El barrio o zona es obligatorio.");
+  if (!address) errors.push("La dirección de entrega es obligatoria.");
+  if (!neighborhood) errors.push("El barrio o zona es obligatorio.");
 
-  const items = Array.isArray(body.items) ? body.items : [];
-  if (items.length === 0) errors.push("El pedido debe contener al menos un producto.");
-  for (const item of items) {
-    if (!item.productId || !item.name || typeof item.price !== "number" ||
-        !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99) {
+  const submittedItems = Array.isArray(body.items) ? body.items : [];
+  const items = [];
+  const seenProductIds = new Set();
+  if (submittedItems.length === 0) errors.push("El pedido debe contener al menos un producto.");
+  for (const item of submittedItems) {
+    const product = item && typeof item === "object"
+      ? productsById.get(String(item.productId || ""))
+      : null;
+    if (!product || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99 || seenProductIds.has(product.id)) {
       errors.push("Uno de los productos del pedido no es válido.");
       break;
     }
+    seenProductIds.add(product.id);
+    items.push({
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: item.quantity,
+    });
   }
 
   const subtotal = items.reduce((t, i) => t + i.price * i.quantity, 0);
-  if (Math.abs(subtotal - Number(body.subtotal)) > 1) {
-    errors.push("El subtotal no coincide con los productos enviados.");
+  if (!Number.isFinite(Number(body.subtotal)) || Math.abs(subtotal - Number(body.subtotal)) > 1) {
+    errors.push("El subtotal no coincide con el menú actual. Actualiza la página y vuelve a intentarlo.");
   }
-  return { errors, items, subtotal };
+  return { errors, items, subtotal, name, phone, email, address, neighborhood, reference, notes };
 }
 
 function isWithinBusinessHoursInBogota(date = new Date()) {
@@ -66,7 +78,7 @@ function isWithinBusinessHoursInBogota(date = new Date()) {
 }
 
 // POST /api/orders — crear pedido
-router.post("/", async (req, res, next) => {
+router.post("/", limitOrderCreation, async (req, res, next) => {
   try {
     if (!isWithinBusinessHoursInBogota()) {
       return res.status(403).json({
@@ -75,7 +87,7 @@ router.post("/", async (req, res, next) => {
       });
     }
     const body = req.body || {};
-    const { errors, items, subtotal } = validateOrder(body);
+    const { errors, items, subtotal, name, phone, email, address, neighborhood, reference, notes } = validateOrder(body);
     if (errors.length) return res.status(400).json({ ok: false, errors });
 
     const trackingToken = crypto.randomBytes(32).toString("base64url");
@@ -88,21 +100,14 @@ router.post("/", async (req, res, next) => {
         ? body.paymentMethod
         : "cash",
       customer: {
-        name: body.customerName.trim(),
-        phone: body.customerPhone.trim(),
-        email: (body.customerEmail || "").trim() || undefined,
+        name,
+        phone,
+        email: email || undefined,
       },
-      delivery:
-        body.orderType === "delivery"
-          ? {
-              address: body.deliveryAddress.trim(),
-              neighborhood: body.neighborhood.trim(),
-              reference: (body.deliveryReference || "").trim() || undefined,
-            }
-          : undefined,
+      delivery: { address, neighborhood, reference: reference || undefined },
       items,
       subtotal,
-      notes: (body.orderNotes || "").trim().slice(0, 500) || undefined,
+      notes: notes || undefined,
     });
 
     res.status(201).json({

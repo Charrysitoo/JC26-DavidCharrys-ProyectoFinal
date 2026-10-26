@@ -1,4 +1,5 @@
 // Almacén unificado: usa MongoDB si está conectado, si no memoria (modo demo).
+const crypto = require("crypto");
 const { isMongoConnected } = require("./db");
 const Order = require("./models/Order");
 const ContactMessage = require("./models/ContactMessage");
@@ -6,8 +7,8 @@ const ContactMessage = require("./models/ContactMessage");
 const memory = { orders: [], messages: [] };
 
 function makeOrderCode() {
-  const n = String(memory.orders.length + 1).padStart(4, "0");
-  return `MK-${Date.now().toString(36).toUpperCase()}-${n}`;
+  const suffix = crypto.randomBytes(3).toString("hex").toUpperCase();
+  return `MK-${Date.now().toString(36).toUpperCase()}-${suffix}`;
 }
 
 // ---------- Pedidos ----------
@@ -17,7 +18,7 @@ async function createOrder(payload) {
     return doc.toObject();
   }
   const order = {
-    _id: `mem-${Date.now()}`,
+    _id: `mem-${Date.now()}-${crypto.randomBytes(3).toString("hex")}`,
     code: makeOrderCode(),
     status: "pending",
     createdAt: new Date().toISOString(),
@@ -57,7 +58,7 @@ async function createMessage(payload) {
     return doc.toObject();
   }
   const msg = {
-    _id: `mem-${Date.now()}`,
+    _id: `mem-${Date.now()}-${crypto.randomBytes(3).toString("hex")}`,
     status: "new",
     createdAt: new Date().toISOString(),
     ...payload,

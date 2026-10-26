@@ -1,42 +1,24 @@
-<div align="center">
+# Makarios — sitio público
 
-# Proyecto Final de Grado — Jóvenes CreaTIvos 2026
-### Makarios: Food & Handicrafts Company
+Proyecto Final de Grado de Jóvenes CreaTIvos 2026
 **Autor:** David Santiago Charrys Pacheco
 
-</div>
+Makarios es una plataforma web para **Makarios: Food & Handicrafts Company**. Este repositorio contiene el sitio para clientes y su API pública. El panel del personal se encuentra en el repositorio independiente **FinalProject-AdminPanel**. Ambos backends consultan las colecciones compartidas de MongoDB Atlas.
 
-## Introducción
+## Funciones del sitio
 
-Makarios es un emprendimiento del sector gastronómico enfocado en la comercialización de alimentos gourmet y comida rápida. Mantener un establecimiento físico puede representar costos elevados, mientras que gestionar todas las solicitudes únicamente por aplicaciones de mensajería puede resultar poco práctico. Por ello, se propone una plataforma web que permita dar a conocer el negocio, consultar su oferta gastronómica y facilitar el contacto y la realización de pedidos.
+- **Inicio (/):** presentación del negocio, platos destacados y horario.
+- **Menú (/menu):** catálogo, categorías, búsqueda y precios.
+- **Pedidos (/pedidos):** carrito, datos de entrega, método de pago preferido y confirmación.
+- **Contacto (/contacto):** formulario para consultas generales.
+- **Asistente:** responde preguntas sobre el menú, recomendaciones, horario y cómo pedir.
+- **Seguimiento:** permite consultar el estado con el número del pedido y el código privado emitido al crearlo.
 
-## Objetivo del proyecto
+La aplicación solo recibe pedidos a domicilio, de lunes a sábado entre las **12:00 p. m. y las 7:00 p. m.**, hora de Colombia (America/Bogota). La interfaz informa cuándo está cerrada y la API vuelve a comprobar el horario antes de guardar un pedido.
 
-Ofrecer una experiencia web completa para Makarios: un sitio público para descubrir el menú, hacer pedidos y contactar al restaurante, más un panel privado para que el personal autorizado administre los pedidos y mensajes recibidos.
+### Catálogo vigente
 
-## Estado actual del proyecto
-
-El sistema está dividido en dos aplicaciones mantenidas en repositorios separados:
-
-- **Sitio público:** este repositorio, desarrollado con React y Vite.
-- **Panel administrativo:** `FinalProject-AdminPanel`, con su propio frontend y backend.
-
-Ambos backends guardan y consultan los pedidos y mensajes en la base de datos compartida de MongoDB Atlas. Cada aplicación tiene su propia API: las operaciones de consulta y administración del personal pasan por el backend administrativo autenticado.
-
-El sitio público incluye estas páginas:
-
-- **Inicio (`Home.jsx`, ruta `/`):** presenta el restaurante y destaca tres productos del catálogo.
-- **Menú (`Menu.jsx`, ruta `/menu`):** muestra los seis platos del catálogo con sus fotografías, nombres, categorías y precios.
-- **Pedidos (`Order.jsx`, ruta `/pedidos`):** permite seleccionar productos, modificar cantidades, revisar el carrito e introducir los datos necesarios para realizar un pedido.
-- **Contacto (`Contact.jsx`, ruta `/contacto`):** contiene un formulario independiente con nombres, apellidos, correo electrónico, teléfono y mensaje. Todos los campos son obligatorios.
-
-La navegación entre páginas se gestiona con **React Router**. Para evitar duplicaciones, el encabezado y el pie de página se encuentran en componentes compartidos (`SiteHeader.jsx` y `SiteFooter.jsx`). Los datos de los productos están centralizados en `products.js`, y el manejo del carrito en el navegador se apoya en `cartStorage.js`. Los estilos generales están separados de los estilos particulares de cada página.
-
-El sitio incorpora un asistente con Gemini para orientar al cliente sobre el menú, pedir recomendaciones, consultar los horarios y explicar cómo realizar un pedido. También permite consultar el estado de un pedido con su número y un código privado.
-
-### Catálogo actual
-
-El catálogo y los precios vigentes están centralizados en `frontend/src/products.js`:
+Los datos visibles al cliente están en **frontend/src/products.js**. El backend tiene el catálogo autoritativo de precios en **backend/src/catalog.js**; ambos archivos deben mantenerse sincronizados.
 
 | Producto | Precio |
 | --- | ---: |
@@ -47,107 +29,84 @@ El catálogo y los precios vigentes están centralizados en `frontend/src/produc
 | Pinchos tres carnes | $18.000 COP |
 | Rollo de pollo en salsa de quesos | $23.000 COP |
 
-Tres productos se muestran como destacados en la página de inicio. El asistente tiene una descripción y una copia de los precios en `backend/src/routes/chat.js`; al cambiar el catálogo, actualiza también ese contexto para evitar recomendaciones con datos desactualizados.
+El backend reconstruye los productos y el subtotal a partir de sus identificadores y precios vigentes. No toma como autoridad los nombres ni los precios enviados por el navegador. El chatbot obtiene nombres, descripciones y precios del catálogo del backend.
 
-## Tecnologías y arquitectura
+## Arquitectura
 
-### Aplicación pública
+- **frontend/**: React, Vite, React Router y CSS adaptable.
+- **backend/**: Node.js, Express y Mongoose.
+- **backend/src/routes/**: rutas de pedidos, contacto y asistente.
+- **backend/src/models/**: modelos MongoDB de pedidos y mensajes.
+- **backend/src/catalog.js**: catálogo autoritativo para la API.
+- **frontend/src/components/ChatWidget.jsx**: chat y formulario seguro de seguimiento.
 
-- **React y JSX:** construcción de la interfaz mediante componentes reutilizables.
-- **CSS:** estilos y diseño adaptable a distintos tamaños de pantalla.
-- **React Router:** navegación entre las páginas públicas.
-- **JavaScript:** gestión del catálogo, la interfaz y el estado del carrito en el frontend.
+MongoDB Atlas guarda pedidos y mensajes. El catálogo se mantiene en código; no existe una colección administrativa de productos.
 
-### Backend, base de datos y aplicación privada
+### API pública
 
-El sistema utiliza:
+| Método y ruta | Función |
+| --- | --- |
+| GET /api/health | Estado del backend |
+| POST /api/orders | Crear pedido a domicilio dentro del horario |
+| POST /api/orders/track | Consultar estado con código del pedido y código privado |
+| POST /api/messages | Guardar una consulta del formulario de contacto |
+| POST /api/chat | Enviar la conversación a Gemini y recibir una respuesta |
 
-- **Node.js y Express:** API para validar solicitudes y conectar las aplicaciones con la base de datos.
-- **MongoDB Atlas:** almacenamiento compartido de pedidos, mensajes y miembros de personal autorizados.
-- **Mongoose:** definición de modelos y validación de los datos que recibe el backend.
-- **Aplicación privada del personal:** inicio de sesión y panel para consultar y gestionar pedidos y mensajes, con acceso restringido a personal autorizado.
-- **Chatbot de inteligencia artificial:** asistente para responder preguntas sobre el restaurante y recomendar platos a partir de la información real del catálogo.
+No hay rutas públicas para listar pedidos ni mensajes. La consulta de seguimiento devuelve código, estado y fechas, sin datos personales. El código privado se muestra al cliente una sola vez; MongoDB conserva únicamente su hash. No se envía al chatbot.
 
-El backend público valida y registra pedidos y mensajes. Usa MongoDB cuando `MONGODB_URI` está configurada; sin esa variable inicia en modo de demostración y mantiene los registros solo en memoria. El modelo de productos está en el frontend, no en una colección administrable de MongoDB.
+Las rutas públicas validan sus solicitudes y tienen límites por IP: 10 pedidos cada 15 minutos, 5 mensajes cada 15 minutos, 12 consultas al chatbot por minuto y 20 consultas de seguimiento cada 15 minutos. Los contadores se guardan en memoria del proceso; no se comparten entre instancias.
 
-El chatbot llama a Gemini desde el backend. `GEMINI_API_KEY` se configura como secreto del servidor, nunca en React. Las preguntas escritas en el chat se envían a Gemini; no se envían el número ni el código privado al chatbot. El seguimiento del pedido usa una ruta separada del backend.
+## Privacidad y configuración de Gemini
 
-Al crear un pedido, el servidor emite un código privado aleatorio junto con el número de pedido. El cliente debe guardar ambos: el código privado solo se muestra al crear el pedido y no se puede recuperar después. El servidor conserva únicamente el hash del código. La consulta devuelve el estado y las fechas del pedido, sin exponer nombre, teléfono, dirección ni otros datos del cliente. Los pedidos anteriores a esta función no tienen ese código y no pueden consultarse por este mecanismo.
+La API Key de Gemini se configura únicamente en el backend con **GEMINI_API_KEY**. El texto que el cliente escribe en el asistente y el historial reciente se envían a Gemini para generar respuestas. El asistente pide no ingresar información personal; el número y código de seguimiento se envían a una ruta separada y nunca al modelo.
 
-El horario publicado es de lunes a sábado, de 12:00 p. m. a 7:00 p. m., hora de Colombia. Tanto la interfaz como el backend rechazan pedidos fuera de ese horario, incluidos los domingos. El servidor vuelve a comprobar la hora al recibir cada solicitud. El restaurante opera únicamente a domicilio.
+El modelo predeterminado es **gemini-3.5-flash-lite**; se puede cambiar con **GEMINI_MODEL**. Si no hay clave configurada, la API responde que el asistente no está disponible. No se incluyen claves en variables VITE_: Vite incorpora esas variables al JavaScript público.
 
-## API y privacidad
+## Desarrollo local
 
-La API pública permite crear pedidos y mensajes, conversar con el asistente y consultar el estado de un pedido individual. No ofrece rutas para listar pedidos o mensajes. La consulta de estado requiere el número de pedido y un código aleatorio privado; el servidor conserva solo el hash del código y responde con el estado y sus fechas, sin datos personales.
+Requisitos: Node.js 20.19 o posterior (o 22.12 o posterior) y npm. Backend y frontend tienen dependencias independientes.
 
-Las operaciones de listado y administración se realizan desde el backend privado del panel, con autenticación JWT. La API pública no debe exponer información de clientes ni depender de CORS como mecanismo de autorización.
+1. Inicia la API desde **backend/**:
 
-| Método y ruta | Uso | Acceso |
-| --- | --- | --- |
-| `POST /api/orders` | Crear pedido a domicilio (lunes a sábado, 12:00 p. m. a 7:00 p. m., hora de Colombia) | Público, con validación del servidor |
-| `POST /api/orders/track` | Consultar el estado usando número de pedido y código privado | Público, limitado por intentos y sin datos personales |
-| `POST /api/messages` | Enviar mensaje de contacto | Público, con validación del servidor |
-| `POST /api/chat` | Consultar el asistente Gemini | Público, limitado por solicitudes |
-| Listados de pedidos y mensajes | No están disponibles en el backend público | El personal los consulta por el backend administrativo autenticado |
-
-El límite de consultas del chatbot es de 12 solicitudes por minuto por IP y el del seguimiento es de 20 por cada 15 minutos por IP. Estos contadores están en memoria del proceso; con varias instancias del backend no constituyen un límite compartido.
-
-## Principios de desarrollo
-
-- Mantener una separación clara entre páginas, componentes compartidos, datos y lógica de negocio.
-- Reutilizar componentes y evitar duplicar información del catálogo.
-- Validar los datos tanto en el frontend como en el backend.
-- Proteger las credenciales y restringir el acceso a las funciones administrativas.
-- Documentar las decisiones técnicas para facilitar el mantenimiento y la sustentación académica.
-
-## Ejecución local
-
-Necesitas Node.js y npm. El proyecto no tiene un `package.json` en la raíz: instala y ejecuta cada parte desde su propia carpeta.
-
-1. En una terminal, prepara el backend:
-
-   ```bash
-   cd backend
-   npm install
-   ```
-
-   Copia `backend/.env.example` como `backend/.env` y configura `MONGODB_URI`. Para activar Gemini, agrega `GEMINI_API_KEY`; el modelo predeterminado está indicado en la plantilla como `GEMINI_MODEL`. Si no configuras MongoDB, el backend usa memoria de demostración.
-
-   Inicia la API:
-
-   ```bash
+   ~~~bash
+   npm ci
    npm run dev
-   ```
+   ~~~
 
-2. En otra terminal, instala e inicia el frontend:
+   Copia **backend/.env.example** como **backend/.env**. Para persistir datos, configura **MONGODB_URI**; si se omite fuera de producción, la API usa memoria temporal. Para el chatbot agrega **GEMINI_API_KEY**. La plantilla contiene **GEMINI_MODEL** y **CORS_ORIGIN**.
 
-   ```bash
-   cd frontend
-   npm install
+2. En otra terminal, inicia el sitio desde **frontend/**:
+
+   ~~~bash
+   npm ci
    npm run dev
-   ```
+   ~~~
 
-   Vite publica el frontend en `http://localhost:5173` y redirige `/api` al backend local en `http://localhost:4000`. Para producción o una API en otra dirección, define `VITE_API_URL` con la URL base de la API, incluyendo `/api`.
+Vite publica el sitio en **http://localhost:5173** y redirige **/api** al backend local en el puerto 4000. En producción, **VITE_API_URL** debe ser el origen del backend público, por ejemplo **https://<api-publica>.onrender.com**. El cliente agrega **/api** automáticamente si falta, así que también acepta el origen terminado en **/api**.
 
-Los archivos `.env` están excluidos de Git. No pongas claves ni credenciales en variables `VITE_*`, ya que esas variables se incorporan al frontend.
+| Variable del backend | Uso |
+| --- | --- |
+| PORT | Puerto HTTP; Render lo proporciona automáticamente |
+| MONGODB_URI | Conexión a Atlas; obligatoria cuando NODE_ENV=production |
+| CORS_ORIGIN | Origen u orígenes del sitio, separados por comas |
+| GEMINI_API_KEY | Secreto de Gemini, solo en el backend |
+| GEMINI_MODEL | Modelo Gemini; predeterminado gemini-3.5-flash-lite |
 
-### Comprobaciones disponibles
+Los archivos .env están excluidos de Git. En producción la API se detiene si falta MongoDB o CORS_ORIGIN, para evitar aceptar solicitudes con almacenamiento temporal o una configuración abierta.
 
-Desde `frontend/` puedes ejecutar `npm run build` y `npm run lint`. El backend tiene `npm run dev` y `npm start`; el script `npm test` es solo un marcador y no ejecuta una suite de pruebas.
+## Despliegue en Vercel y Render
 
-## Despliegue inicial en Vercel y Render
+- **Vercel:** importa este repositorio, define **frontend/** como directorio raíz, comando **npm run build** y salida **dist**. Configura **VITE_API_URL** como **Config** con el origen público de la API Render (por ejemplo, **https://<api-publica>.onrender.com**). El cliente agrega **/api** automáticamente si hace falta. Es una dirección pública, no un secreto. El archivo **frontend/vercel.json** permite abrir directamente las rutas de React Router.
+- **Render:** crea un Web Service desde este repositorio, con **backend/** como directorio raíz, **npm ci** para instalar y **npm start** para iniciar. Configura **MONGODB_URI**, **CORS_ORIGIN**, **GEMINI_API_KEY** y, opcionalmente, **GEMINI_MODEL**. Usa **/api/health** como health check.
+- En Atlas, permite la conexión de salida del servicio Render mediante su lista de IPs/rangos y usa un usuario de base de datos con permisos para la base del proyecto.
 
-- **Vercel (sitio):** configura `frontend/` como directorio raíz, usa `npm run build` como comando de compilación y `dist` como directorio de salida. Define `VITE_API_URL` con el origen del backend público de Render y el prefijo `/api`, por ejemplo `https://<api-publica>.onrender.com/api`.
-- **Render (API pública):** configura `backend/` como directorio raíz, `npm ci` como comando de compilación e `npm start` como comando de inicio. Usa `/api/health` como comprobación de salud y configura `MONGODB_URI`, `CORS_ORIGIN` con el origen exacto del sitio Vercel, y `GEMINI_API_KEY`. Render proporciona `PORT`.
-- Permite en MongoDB Atlas la conexión desde el servicio de Render y usa la misma base de datos prevista para el panel.
-- Después del primer despliegue, verifica en el navegador las rutas `/`, `/menu`, `/pedidos` y `/contacto`; `frontend/vercel.json` redirige las rutas de la SPA a `index.html`.
+## Comprobaciones para la entrega
 
-El seguimiento del pedido consulta únicamente el backend público. No se debe configurar `GEMINI_API_KEY`, `MONGODB_URI` ni otros secretos como variables `VITE_*` de Vercel.
+Desde **frontend/**:
 
-## Próximas etapas
+~~~bash
+npm run build
+npm run lint
+~~~
 
-1. Confirmar ingredientes, alérgenos, disponibilidad y cobertura de domicilios para que el chatbot use información completa y verificada.
-2. Mantener sincronizados el catálogo del frontend y el contexto de productos del backend del chatbot.
-3. Verificar que los entornos desplegados mantengan el acceso correcto a MongoDB Atlas y que los orígenes CORS solo incluyan los sitios autorizados.
-4. Revisar autenticación administrativa, consulta privada de pedidos, cuotas y experiencia completa antes de la entrega final.
-5. Publicar las aplicaciones y monitorear el uso de Gemini.
+El backend no tiene una suite automatizada configurada. Para la comprobación manual de producción, crea un pedido dentro del horario, verifica que aparezca en el panel, cambia su estado, consulta el seguimiento con el código privado y envía un mensaje desde Contacto. La API rechaza pedidos fuera del horario.

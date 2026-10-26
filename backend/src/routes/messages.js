@@ -1,7 +1,13 @@
 const express = require("express");
 const store = require("../store");
+const { createRateLimiter } = require("../middleware/rateLimit");
 
 const router = express.Router();
+const limitMessageCreation = createRateLimiter({
+  windowMs: 15 * 60_000,
+  max: 5,
+  message: "Se alcanzó el límite de mensajes. Inténtalo más tarde.",
+});
 
 function validateMessage(body) {
   const errors = [];
@@ -18,7 +24,7 @@ function validateMessage(body) {
 }
 
 // POST /api/messages — guardar mensaje de contacto
-router.post("/", async (req, res, next) => {
+router.post("/", limitMessageCreation, async (req, res, next) => {
   try {
     const body = req.body || {};
     const errors = validateMessage(body);
