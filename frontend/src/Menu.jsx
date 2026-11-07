@@ -1,4 +1,5 @@
 // Catálogo navegable; usa products.js para mantener menú y pedidos sincronizados.
+import { Link } from "react-router-dom";
 import { useMemo, useState, useEffect } from "react";
 import "./Menu.css";
 import { products, categories, formatPrice } from "./products";
@@ -185,10 +186,10 @@ export default function Menu() {
           <h2>Tu próximo antojo <em>empieza aquí.</em></h2>
         </div>
         <div className="menu-banner-actions">
-          <a className="button button-light" href="/pedidos">
+          <Link className="button button-light" to="/pedidos">
             Realizar pedido <span aria-hidden="true">↗</span>
-          </a>
-          <a className="menu-banner-contact" href="/contacto">Contactar al restaurante</a>
+          </Link>
+          <Link className="menu-banner-contact" to="/contacto">Contactar al restaurante</Link>
         </div>
       </section>
 

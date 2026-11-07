@@ -1,4 +1,5 @@
 import logo from "../assets/MAKARIOS-LOGO.svg";
+import { Link } from "react-router-dom";
 
 /** Pie de página común. Puede volver arriba o llevar a otra página. */
 export default function SiteFooter({
@@ -16,18 +17,18 @@ export default function SiteFooter({
 
   return (
     <footer className="site-footer">
-      <a className="footer-brand" href={brandHref} aria-label="Makarios Company: ir al inicio">
+      <Link className="footer-brand" to={brandHref} aria-label="Makarios Company: ir al inicio">
         <img src={logo} alt="Makarios Company" />
         <span>Isaías 41:10-13</span>
-      </a>
+      </Link>
       <p>© {new Date().getFullYear()} Makarios Company. By: David Santiago Charrys Pacheco.</p>
-      <a
-        href={backHref}
+      <Link
+        to={backHref}
         className="back-to-top"
         onClick={handleBackClick}
       >
         {backLabel} {backToTop ? "↑" : "↗"}
-      </a>
+      </Link>
     </footer>
   );
 }

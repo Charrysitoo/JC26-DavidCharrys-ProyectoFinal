@@ -1,4 +1,5 @@
 // Página de inicio: presenta el negocio y conecta con el menú, pedidos y contacto.
+import { Link } from "react-router-dom";
 import "./Home.css";
 import mainImage from "./assets/Main-Image.jpg";
 import SiteHeader from "./components/SiteHeader";
@@ -33,9 +34,9 @@ export default function Home() {
           </p>
 
           <div className="hero-actions">
-            <a className="button button-primary" href="/menu">
+            <Link className="button button-primary" to="/menu">
               Explorar el menú <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </div>
         </div>
         <div className="hero-visual" aria-label="Presentación gastronómica">
@@ -85,7 +86,7 @@ export default function Home() {
           <h2 id="home-hours-title">Nuestro <em>horario.</em></h2>
           <p>Lunes a sábado, de 12:00 p. m. a 7:00 p. m. Los domingos no tenemos servicio ni recibimos pedidos.</p>
         </div>
-        <a className="button button-outline" href="/pedidos">Hacer pedido <span aria-hidden="true">→</span></a>
+        <Link className="button button-outline" to="/pedidos">Hacer pedido <span aria-hidden="true">→</span></Link>
       </section>
 
       <section className="menu-section section-wrap" id="menu">
@@ -113,9 +114,9 @@ export default function Home() {
                   <span className="dish-price">{formatPrice(dish.price)}</span>
                 </div>
                 <p>{dish.description}</p>
-                <a href="/menu" className="dish-link">
+                <Link to="/menu" className="dish-link">
                   Ver en el menú <span aria-hidden="true">↗</span>
-                </a>
+                </Link>
               </div>
             </article>
           ))}
@@ -123,9 +124,9 @@ export default function Home() {
 
         <div className="menu-bottom">
           <p>¿Ya sabes qué se te antoja?</p>
-          <a className="button button-outline" href="/menu">
+          <Link className="button button-outline" to="/menu">
             Consulta el menú completo <span aria-hidden="true">→</span>
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -139,9 +140,9 @@ export default function Home() {
             Escríbenos para consultar el menú, conocer nuestros horarios o
             preguntar por las opciones para pedir.
           </p>
-          <a className="button button-light" href="/contacto">
+          <Link className="button button-light" to="/contacto">
             Contactar al restaurante <span aria-hidden="true">↗</span>
-          </a>
+          </Link>
         </div>
       </section>
 

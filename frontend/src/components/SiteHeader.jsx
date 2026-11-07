@@ -1,4 +1,5 @@
 import logo from "../assets/MAKARIOS-LOGO.svg";
+import { Link } from "react-router-dom";
 
 /**
  * Encabezado reutilizable para las páginas principales del sitio.
@@ -14,31 +15,31 @@ export default function SiteHeader({
 
   return (
     <header className="site-header">
-      <a
+      <Link
         className="brand"
-        href={activePage === "home" ? "#inicio" : "/"}
+        to={activePage === "home" ? "#inicio" : "/"}
         aria-label="Ir al inicio"
       >
         <img className="brand-logo" src={logo} alt="Logo de Makarios Company" />
-      </a>
+      </Link>
 
       <nav className="main-nav" aria-label="Navegación principal">
-        <a href={homeHref} aria-current={activePage === "home" ? "page" : undefined}>
+        <Link to={homeHref} aria-current={activePage === "home" ? "page" : undefined}>
           Inicio
-        </a>
-        <a href="/menu" aria-current={activePage === "menu" ? "page" : undefined}>
+        </Link>
+        <Link to="/menu" aria-current={activePage === "menu" ? "page" : undefined}>
           Menú
-        </a>
-        <a href="/contacto" aria-current={activePage === "contact" ? "page" : undefined}>Contacto</a>
+        </Link>
+        <Link to="/contacto" aria-current={activePage === "contact" ? "page" : undefined}>Contacto</Link>
       </nav>
 
-      <a
+      <Link
         className="header-cta"
-        href={actionHref}
+        to={actionHref}
         aria-label={actionAriaLabel || actionLabel}
       >
         {actionLabel} <span aria-hidden="true">↗</span>
-      </a>
+      </Link>
     </header>
   );
 }
