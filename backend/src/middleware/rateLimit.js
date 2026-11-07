@@ -1,3 +1,4 @@
+// Contador simple por IP en memoria; cada instancia mantiene su propio límite.
 function getClientIp(req) {
   const cloudflareIp = req.get("cf-connecting-ip");
   if (cloudflareIp) return cloudflareIp.trim();

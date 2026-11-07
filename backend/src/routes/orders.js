@@ -65,6 +65,7 @@ function validateOrder(body) {
 }
 
 function isWithinBusinessHoursInBogota(date = new Date()) {
+  // Fija la zona horaria del negocio para no depender de dónde se ejecute el servidor.
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Bogota",
     weekday: "short",
@@ -90,6 +91,7 @@ router.post("/", limitOrderCreation, async (req, res, next) => {
     const { errors, items, subtotal, name, phone, email, address, neighborhood, reference, notes } = validateOrder(body);
     if (errors.length) return res.status(400).json({ ok: false, errors });
 
+    // Se entrega una vez al cliente; la base de datos conserva solo el hash SHA-256.
     const trackingToken = crypto.randomBytes(32).toString("base64url");
     const trackingTokenHash = crypto.createHash("sha256").update(trackingToken).digest("hex");
 

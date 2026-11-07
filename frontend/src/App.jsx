@@ -1,3 +1,4 @@
+// Define las rutas públicas; el asistente se monta una vez para estar disponible en todas ellas.
 import {
   BrowserRouter,
   Routes,

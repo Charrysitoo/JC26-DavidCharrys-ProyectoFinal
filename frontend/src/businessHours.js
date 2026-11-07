@@ -1,3 +1,4 @@
+// Regla horaria visible en la interfaz. El backend aplica la misma regla como autoridad.
 export function isWithinBusinessHoursInBogota(date = new Date()) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Bogota",

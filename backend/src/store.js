@@ -1,4 +1,4 @@
-// Almacén unificado: usa MongoDB si está conectado, si no memoria (modo demo).
+// Abstrae persistencia para que las rutas usen la misma interfaz con MongoDB o memoria local.
 const crypto = require("crypto");
 const { isMongoConnected } = require("./db");
 const Order = require("./models/Order");
@@ -7,6 +7,7 @@ const ContactMessage = require("./models/ContactMessage");
 const memory = { orders: [], messages: [] };
 
 function makeOrderCode() {
+  // El sufijo aleatorio reduce colisiones si dos pedidos se crean en el mismo milisegundo.
   const suffix = crypto.randomBytes(3).toString("hex").toUpperCase();
   return `MK-${Date.now().toString(36).toUpperCase()}-${suffix}`;
 }
@@ -34,6 +35,7 @@ async function listOrders() {
 }
 
 async function findTrackableOrder(code, trackingTokenHash) {
+  // Solo devuelve campos públicos de seguimiento, nunca datos personales ni el hash.
   if (isMongoConnected()) {
     return Order.findOne({ code, trackingTokenHash })
       .select("code status updatedAt createdAt")

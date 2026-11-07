@@ -36,6 +36,7 @@ Menú:
 ${MENU_CONTEXT}
 `;
 
+// Valida tamaño, roles y último mensaje antes de enviar historial a Gemini.
 function normalizeHistory(value) {
   if (!Array.isArray(value) || value.length === 0 || value.length > 12) return null;
   const history = [];

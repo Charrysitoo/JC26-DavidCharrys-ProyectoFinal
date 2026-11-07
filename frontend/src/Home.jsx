@@ -1,3 +1,4 @@
+// Página de inicio: presenta el negocio y conecta con el menú, pedidos y contacto.
 import "./Home.css";
 import mainImage from "./assets/Main-Image.jpg";
 import SiteHeader from "./components/SiteHeader";

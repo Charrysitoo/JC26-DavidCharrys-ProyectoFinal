@@ -1,3 +1,4 @@
+// Catálogo navegable; usa products.js para mantener menú y pedidos sincronizados.
 import { useMemo, useState, useEffect } from "react";
 import "./Menu.css";
 import { products, categories, formatPrice } from "./products";

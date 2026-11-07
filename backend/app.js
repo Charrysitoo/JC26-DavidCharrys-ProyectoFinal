@@ -1,3 +1,4 @@
+// Arranque de la API pública: configura CORS, rutas, JSON y conexión a MongoDB.
 require("dotenv").config();
 
 const express = require("express");
@@ -32,6 +33,7 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true, service: "makarios-api", time: new Date().toISOString() });
 });
 
+// Cada router concentra un flujo del dominio y comparte el prefijo público /api.
 app.use("/api/orders", ordersRouter);
 app.use("/api/messages", messagesRouter);
 app.use("/api/chat", chatRouter);

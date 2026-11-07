@@ -1,3 +1,4 @@
+// Punto de entrada del sitio: carga estilos globales y monta React en #root.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/global.css'

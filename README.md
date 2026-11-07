@@ -110,3 +110,7 @@ npm run lint
 ~~~
 
 El backend no tiene una suite automatizada configurada. Para la comprobación manual de producción, crea un pedido dentro del horario, verifica que aparezca en el panel, cambia su estado, consulta el seguimiento con el código privado y envía un mensaje desde Contacto. La API rechaza pedidos fuera del horario.
+
+## Guía para la sustentación
+
+Consulta **[GUIA_SUSTENTACION.md](./GUIA_SUSTENTACION.md)** para el guion de exposición, el diagrama de arquitectura, un recorrido por los dos repositorios, una demostración sugerida y preguntas probables del jurado.

@@ -1,3 +1,4 @@
+// Mensaje que crea el sitio público y consulta/atiende el panel administrativo.
 const mongoose = require("mongoose");
 
 const contactMessageSchema = new mongoose.Schema(

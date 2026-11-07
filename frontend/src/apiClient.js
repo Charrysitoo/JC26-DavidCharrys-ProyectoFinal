@@ -1,4 +1,4 @@
-// Cliente HTTP mínimo para hablar con el backend de Makarios.
+// Centraliza las llamadas HTTP y la traducción de errores de la API pública.
 // En desarrollo, Vite hace proxy de /api hacia http://localhost:4000.
 // En producción se acepta el origen de Render con o sin el sufijo /api.
 const configuredApiUrl = import.meta.env.VITE_API_URL?.trim().replace(/\/+$/, "");

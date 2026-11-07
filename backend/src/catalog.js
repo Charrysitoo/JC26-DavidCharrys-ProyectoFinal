@@ -1,4 +1,5 @@
-// Catálogo autoritativo del backend. Mantenerlo sincronizado con frontend/src/products.js.
+// Catálogo autoritativo para precios, pedidos y contexto del chatbot.
+// Mantenerlo sincronizado con frontend/src/products.js al cambiar el menú.
 const products = [
   {
     id: "tabla-de-quesos",

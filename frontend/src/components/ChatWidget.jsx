@@ -1,3 +1,5 @@
+// Asistente del sitio: consultas, accesos rápidos y seguimiento privado del pedido.
+// El código de seguimiento se envía a una ruta independiente y nunca a Gemini.
 import { useState } from "react";
 import { sendChatMessage, trackOrder } from "../apiClient";
 import "./ChatWidget.css";

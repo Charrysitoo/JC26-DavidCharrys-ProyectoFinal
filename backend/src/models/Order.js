@@ -1,3 +1,4 @@
+// Esquema compartido por sitio y panel; ambos repositorios deben conservar compatibilidad.
 const mongoose = require("mongoose");
 
 const orderItemSchema = new mongoose.Schema(

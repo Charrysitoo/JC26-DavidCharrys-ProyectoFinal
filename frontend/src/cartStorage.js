@@ -1,5 +1,5 @@
-// El carrito se guarda solo en el navegador para poder pasar del menú a pedidos.
-// No se envía a ningún servidor hasta conectar el backend.
+// Conserva la selección entre Menú y Pedidos; solo persiste IDs y cantidades.
+// El servidor vuelve a resolver precios y nombres al recibir el pedido.
 const CART_STORAGE_KEY = "restaurante-carrito-v2";
 
 export function readCart() {

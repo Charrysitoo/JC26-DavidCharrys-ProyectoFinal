@@ -1,3 +1,4 @@
+// Carrito y envío de pedidos a domicilio; el backend vuelve a validar horario, productos y subtotal.
 import { useMemo, useState, useEffect } from "react";
 import "./Order.css";
 import { products, formatPrice } from "./products";

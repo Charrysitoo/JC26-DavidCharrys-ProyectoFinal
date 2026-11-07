@@ -1,3 +1,4 @@
+// Formulario de consultas generales; envía los datos a la API pública de contacto.
 import { useEffect, useState } from "react";
 import "./Contact.css";
 import SiteHeader from "./components/SiteHeader";
